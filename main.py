@@ -1,3 +1,5 @@
+import NumPy
+
 print("Hello, World!")
 ergebniss = 2+2
 
