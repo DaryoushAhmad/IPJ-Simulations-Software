@@ -1,6 +1,45 @@
-import NumPy
+import tkinter as tk
+from Funktionen import simulationStarten #Import der Funktion "simulationStarten" aus dem Ordner "Funktionen"
 
-print("Hello, World!")
-ergebniss = 2+2
 
-print("test", ergebniss, "leck eier")
+
+#Fenster Einrichten
+
+fenster = tk.Tk()   #Erstellen des Hauptfensters
+
+fenster.title("Energiesystem-Simulator V0.1")   # Fenstertitel festlegen
+fenster.geometry("500x550") # Fenstergröße bestimmen
+
+
+
+beschriftungStromverbrauch = tk.Label(fenster, text="Stromverbrauch [GW]:")
+beschriftungStromverbrauch.pack() #sorgt dafür das es im Fenster angezeigt wird
+eingabefeldStromverbrauch = tk.Entry(fenster)
+eingabefeldStromverbrauch.pack()
+
+
+
+beschriftungPvErzeugung = tk.Label(fenster, text="PV-Erzeugung [GW]:")
+beschriftungPvErzeugung.pack()
+eingabefeldPvErzeugung = tk.Entry(fenster)
+eingabefeldPvErzeugung.pack()
+
+
+beschriftungWindErzeugung = tk.Label(fenster, text="Wind-Erzeugung [GW]:")
+beschriftungWindErzeugung.pack()
+eingabefeldWindErzeugung = tk.Entry(fenster)
+eingabefeldWindErzeugung.pack()
+
+button = tk.Button(fenster,
+                   text="Simulation starten",   #Name des Buttons
+                   command=lambda: simulationStarten(eingabefeldStromverbrauch  #lambda sorgt dafür das die funktion erst nach dem Klick ausgeführt wird und nicht sofort
+                                                     ,eingabefeldPvErzeugung
+                                                     ,eingabefeldWindErzeugung
+                                                     ,fenster))   #Welche Funktion ausgeführt werden soll
+button.pack()
+
+
+
+
+fenster.mainloop()  # Startet die Ereignesverarbeitung des Fensters(Immer zum Ende)
+    
