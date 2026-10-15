@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 
-def simulationStarten(stromVerbrauch, pvErzeugung, windErzeugung,fenster):
+def simulationStarten(stromVerbrauch, pvErzeugung, windErzeugung,fenster, ausgabeLabel, ausgabeStatus):
     # Die eingaben aus den Feldern herholen + eingabe wird als String geliefert: muss gecastet werden!
     try:
         userEingabeStromVerbrauch = float(stromVerbrauch.get())
@@ -42,13 +42,14 @@ def simulationStarten(stromVerbrauch, pvErzeugung, windErzeugung,fenster):
         f"Überschuss: {pÜberschuss:.2f} GW\n"
     )
 
-    ausgabe = tk.Label(fenster, text=ausgabetext, justify="left" )
-    ausgabe.pack(pady=10)
+    ausgabeLabel.config(text=ausgabetext)
+
 
     if pBilanz > 0:
-        tk.Label(fenster, text="Status: Stromüberschuss").pack()
+        ausgabeStatus.config(text="Status: Stromüberschuss")
     elif pBilanz < 0:
-        tk.Label(fenster, text="Status: Stromdefizit").pack()
+        ausgabeStatus.config(text="Status: Stromdefizit")
     else:
-        tk.Label(fenster, text="Status: Erzeugung und Verbrauch ausgeglichen").pack()
+        ausgabeStatus.config(text="Status: Erzeugung und Verbrauch ausgeglichen")
+
 
