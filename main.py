@@ -30,12 +30,19 @@ beschriftungWindErzeugung.pack()
 eingabefeldWindErzeugung = tk.Entry(fenster)
 eingabefeldWindErzeugung.pack()
 
+ausgabeLabel = tk.Label(fenster)
+ausgabeLabel.pack(pady=10)
+ausgabeStatus = tk.Label(fenster,text="Status:")
+ausgabeStatus.pack(pady=10)
+
 button = tk.Button(fenster,
                    text="Simulation starten",   #Name des Buttons
                    command=lambda: simulationStarten(eingabefeldStromverbrauch  #lambda sorgt dafür das die funktion erst nach dem Klick ausgeführt wird und nicht sofort
                                                      ,eingabefeldPvErzeugung
                                                      ,eingabefeldWindErzeugung
-                                                     ,fenster))   #Welche Funktion ausgeführt werden soll
+                                                     ,fenster
+                                                     ,ausgabeLabel
+                                                     ,ausgabeStatus))   #Welche Funktion ausgeführt werden soll
 button.pack()
 
 
