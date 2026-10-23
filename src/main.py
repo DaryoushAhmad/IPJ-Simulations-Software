@@ -1,5 +1,6 @@
 import tkinter as tk
 from Funktionen import simulationStarten #Import der Funktion "simulationStarten" aus dem Ordner "Funktionen"
+from BerechnungsFunktionen import haeufigkeitsverteilung_EE
 
 
 
@@ -45,7 +46,7 @@ button = tk.Button(fenster,
                                                      ,ausgabeStatus))   #Welche Funktion ausgeführt werden soll
 button.pack()
 
-
+haeufigkeitsverteilung_EE()
 
 
 fenster.mainloop()  # Startet die Ereignesverarbeitung des Fensters(Immer zum Ende)
