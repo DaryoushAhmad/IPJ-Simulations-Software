@@ -14,9 +14,9 @@ PV_Installiert = 118.111
 windOnShore_Installiert = 68.179
 windOffShore_Installiert = 9.733
 
-PV_Prognose = 4
-windOn_Prognose = 4
-windOff_Prognose = 4
+PV_Prognose = 1
+windOn_Prognose = 1
+windOff_Prognose = 1
 
 # 2,5 da man es wieder in MWh umrechnen muss, da sie vorher in viertelstundenwerte umgerechnet wurden.
 dfGesamt["EE_Erzeugung"] = ((dfGesamt["PV"] * PV_Installiert * PV_Prognose) + (dfGesamt["Wind Onshore"] * windOnShore_Installiert * windOn_Prognose) + (dfGesamt["Wind Offshore"] * windOffShore_Installiert * windOff_Prognose)) * 2.5
@@ -28,6 +28,7 @@ EE_Anteil_Mittel = dfGesamt["EE_Anteil"].mean()
 print("EE-Anteil im Mittel: ", EE_Anteil_Mittel)
 
 #Plotten=======================================
+"""
 ee_intervallgrenzen = list(range(0, 170, 10))
 
 dfGesamt["EE_Intervall"] = pd.cut(dfGesamt["EE_Anteil"], bins=ee_intervallgrenzen, include_lowest=True)
@@ -47,3 +48,6 @@ fig.update_layout(
 )
 
 fig.show()
+"""
+
+#dfGesamt.to_csv("profil.csv",sep=";", decimal=",", index=True)
