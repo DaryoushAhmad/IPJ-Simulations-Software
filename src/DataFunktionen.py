@@ -10,12 +10,12 @@ def setUpGesamtcsv():
     )
     dfGesamt["Datum von"] = pd.to_datetime(
     dfGesamt["Datum von"],
-    format="%Y-%m-%d %H:%M:%S"
+    format="%d.%m.%Y %H:%M"
     )
 
     dfGesamt["Datum bis"] = pd.to_datetime(
     dfGesamt["Datum bis"],
-    format="%Y-%m-%d %H:%M:%S"
+    format="%d.%m.%Y %H:%M"
     )   
     return dfGesamt
 
