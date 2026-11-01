@@ -18,12 +18,37 @@ st.set_page_config("Titel","icon" , "wide") #funtkioniert das?
 #titel
 st.sidebar.title("Energiesystem-Simulator")
 
+#daten laden und und zuweisen
+dfGesamt=setUpGesamtcsv()
+dfJahres=setUpJahresStatistikcsv()
+
+
+
 #auswahlmenü
 auswahl_nav=st.sidebar.radio("Navigation", ["Dashboard", "Zeitreihen-Analyse", "Szenarien-Simu"])
 
 if(auswahl_nav=="Dashboard"):
     #dashboard aufgerufen
     st.title("dashboard ausführen")
+    
+    #werte berechnen min, max, mittelwert aus daten in prozent
+    mittel_ee=dfGesamt["EE_Anteil"].mean()
+    max_ee=dfGesamt["EE_Anteil"].max()
+    min_ee=dfGesamt["EE_Anteil"].min()
+    
+    #layout in 3 spalten aufteilen
+    col1, col2, col3 =st.columns(3)
+    
+    #kpi karten in spalten anzeigen
+    col1.metric(label="durchschn. EE-Anteil", value=f"{mittel_ee:.1f}%")
+    col2.metric(label="max EE-Anteil", value=f"{max_ee:.1f}%")
+    col3.metric(label="min EE-Anteil", value=f"{min_ee:.1f}%")
+    
+    
+    
+    
+    
+    
     
 elif(auswahl_nav=="Zeitreihen-Analyse"):
     #
@@ -37,7 +62,7 @@ elif(auswahl_nav=="Szenarien-Simu"):
 
 
 
-# ladeanzeige während des ersten ausführens
+#kpi karten
 
 
 
