@@ -7,6 +7,10 @@
 #               -interaktive flüssige simulationen
 
 
+#todo:pathlib? sodass pfasd immer gleich
+#               app.py fertigstellen
+#               was essen nicht vergessen
+
 #imports
 import streamlit as st
 from DataFunktionen import setUpGesamtcsv, setUpJahresStatistikcsv
