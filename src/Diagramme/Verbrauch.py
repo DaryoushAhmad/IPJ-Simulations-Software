@@ -83,7 +83,7 @@ df20_26 = dfGefiltert.groupby(
     ["Jahr", "Monat"], as_index=False
 )["Netzlast [MWh] Originalauflösungen"].sum()
 
-
+#Diagramm plotten von chat
 # Gemeinsamer Monatsvergleich
 
 monatsnamen = [
