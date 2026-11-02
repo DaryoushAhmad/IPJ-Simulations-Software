@@ -64,7 +64,38 @@ def erzeuge_ee_histogramm(df_eingabe):
                       annotation_position="top right"
                       )
     
+    return fig
+
+
+
+
+def erzeuge_kreisdiagram_spalten(df_eingabe):
+    #erzeugungsspalten auswählen
+    spalten_erzeugung=["Biomasse [MWh] Originalauflösungen","Wasserkraft [MWh] Originalauflösungen","Wind Offshore [MWh] Originalauflösungen","Wind Onshore [MWh] Originalauflösungen","Photovoltaik [MWh] Originalauflösungen","Sonstige Erneuerbare [MWh] Originalauflösungen","Kernenergie [MWh] Originalauflösungen","Braunkohle [MWh] Originalauflösungen","Steinkohle [MWh] Originalauflösungen","Erdgas [MWh] Originalauflösungen","Pumpspeicher [MWh] Originalauflösungen_x","Sonstige Konventionelle [MWh] Originalauflösungen",]
+    
+    #summen über zeitraum berechnen
+    df_mix=df_eingabe[spalten_erzeugung].sum().reset_index()
+    df_mix.columns=["Energieträger", "Erzeugung MWh"]
+    
+    #beschriftungen bereinigen?
+    df_mix["Energieträger"]=df_mix["Energieträger"].str.replace(" [MWh] Originalauflösungen", "", regex=False)
+    
+    
+    #kreisdiagramm erstellen
+    fig=px.pie(
+        df_mix,
+        names="Energieträger",
+        values="Erzeugung MWh",
+        title="Gesamter Erzeugungsmix seit 2020",
+        hole=0.4, #kreisoptik 0.4
+    )
+    
+    
+    #anzeige details
+    fig.update_traces(textinfo="percent+label", textposition="outside")
+    fig.update_layout(title_font_size=18, showlegend=True,
+                      height=900,)
+    
     
     return fig
-    
     
