@@ -1,6 +1,9 @@
 # hauptdatei für die UI
 
-# ausführen:                python -m streamlit run app.py
+# ausführen:       1.         app.py in integrierten Terminal öffnen
+#                  2.         python -m streamlit run app.py
+
+
 
 # anforderungen -übersichtlichtkeit für schnelle einblicke
 #               -fachliche tiefe
