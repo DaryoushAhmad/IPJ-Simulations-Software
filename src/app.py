@@ -14,7 +14,7 @@
 #imports
 import streamlit as st
 from DataFunktionen import setUpGesamtcsv, setUpJahresStatistikcsv
-
+from BerechnungsFunktionen import erzeuge_ee_histogramm
 
 #grundeinstellungen festlegen
 st.set_page_config("Titel","icon" , "wide") #funtkioniert das?
@@ -33,7 +33,8 @@ auswahl_nav=st.sidebar.radio("Navigation", ["Dashboard", "Zeitreihen-Analyse", "
 
 if(auswahl_nav=="Dashboard"):
     #dashboard aufgerufen
-    st.title("dashboard ausführen")
+    st.title("Dashboard")
+    st.write("Willkommen zu deinem Dashboard")
     
     #werte berechnen min, max, mittelwert aus daten in prozent
     mittel_ee=dfGesamt["EE_Anteil"].mean()
@@ -48,7 +49,8 @@ if(auswahl_nav=="Dashboard"):
     col2.metric(label="max EE-Anteil", value=f"{max_ee:.1f}%")
     col3.metric(label="min EE-Anteil", value=f"{min_ee:.1f}%")
     
-    
+    fig_histogramm=erzeuge_ee_histogramm(dfGesamt)
+    st.plotly_chart(fig_histogramm, use_container_width=True)
     
     
     
@@ -56,11 +58,11 @@ if(auswahl_nav=="Dashboard"):
     
 elif(auswahl_nav=="Zeitreihen-Analyse"):
     #
-    st.title("2. ausführen")
+    st.title("2. coming soon...")
 
 elif(auswahl_nav=="Szenarien-Simu"):
     #3
-    st.title("3. ausführen")
+    st.title("3. coming soon...")
 
 
 
@@ -75,5 +77,5 @@ elif(auswahl_nav=="Szenarien-Simu"):
 
 
 
-st.write("Willkommen zu deinem Dashboard")
+
 
