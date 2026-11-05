@@ -9,12 +9,18 @@ def haeufigkeitsverteilung_EE():
     ee_intervallgrenzen = list(range(0, 170, 10))
 
     dfGesamt["EE_Intervall"] = pd.cut(dfGesamt["EE_Anteil"], bins=ee_intervallgrenzen, include_lowest=True)
+    dfGesamt["EE_Intervall_Label"]=dfGesamt["EE_Intervall"].apply(lambda interval: f"{int(interval.left)}-{int(interval.right)}")
 
-    EE_Intervall_Haeufigkeit = dfGesamt["EE_Intervall"].value_counts(sort=False)
+    #Neu Gruppieren
+    kategorien=[f"{l}-{r}" for l, r in zip(ee_intervallgrenzen[:-1],ee_intervallgrenzen[1:])]
+    dfGesamt["EE_Intervall_Label"]=pd.Categorical(dfGesamt["EE_Intervall_Label"], categories=kategorien,ordered=True)
+
+    #mit Observed=False wird auch Bereich 0-10 betrachtet
+    grouped=dfGesamt.groupby("EE_Intervall_Label", observed=False).size()
 
     fig = px.bar(
-        x=EE_Intervall_Haeufigkeit.index.astype(str),
-        y=EE_Intervall_Haeufigkeit.values
+        x=grouped.index.astype(str),
+        y=grouped.values
     )
 
     # Diagramm mit einem Titel und Achsenbeschriftungen versehen
