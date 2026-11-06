@@ -29,4 +29,12 @@ def setUpJahresStatistikcsv():
     )
     return dfJahresStatistik
     
-
+def setUpErzeugerProfil():
+    dfErzeugerProfil = pd.read_csv(
+        "data/bereinigt/EE_Jahresprofil_2020-2025.csv",
+        sep=";",    
+        decimal=",",    #Pandas erklären das es ein Dezimalzeichen ist
+        thousands=".",   #Pandas erklären das es ein 1000 Zeichen
+        na_values=["-"]
+    )
+    return dfErzeugerProfil
