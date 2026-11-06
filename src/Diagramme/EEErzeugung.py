@@ -137,7 +137,7 @@ monatsdiagramm.update_layout(
 )
 monatsdiagramm.show(renderer="browser")
 '''
-
+#df20_26.info()
 
 #Jahreszeiten Tage
 
@@ -216,7 +216,7 @@ for jahreszeit, dfTag in tagesdaten:
 
 dfGesamt["Erzeugung Gesamt"] = dfGesamt["EE_Erzeugung"] + dfGesamt["Braunkohle [MWh] Originalauflösungen"] + dfGesamt["Steinkohle [MWh] Originalauflösungen"] + dfGesamt["Erdgas [MWh] Originalauflösungen"] + dfGesamt["Kernenergie [MWh] Originalauflösungen"] + dfGesamt["Pumpspeicher [MWh] Originalauflösungen_x"] + dfGesamt["Sonstige Konventionelle [MWh] Originalauflösungen"]
 
-
+'''
 # Gesamtproduktion je Jahr berechnen; das Jahr ist der Index.
 jahressummen = dfGesamt.groupby(
     dfGesamt["Datum von"].dt.year
@@ -295,3 +295,73 @@ vergleichsdiagramm.add_annotation(
     text="<br>".join(hinweise), showarrow=False, xanchor="left",
 )
 vergleichsdiagramm.show(renderer="browser")
+'''
+
+
+
+#==========================================================================================================================
+
+
+anzahl2020 = ((dfGesamt["EE_Anteil"] >= 100) & (dfGesamt["Datum von"].dt.year == 2020)).sum()
+anzahl2021 = ((dfGesamt["EE_Anteil"] >= 100) & (dfGesamt["Datum von"].dt.year == 2021)).sum()
+anzahl2022 = ((dfGesamt["EE_Anteil"] >= 100) & (dfGesamt["Datum von"].dt.year == 2022)).sum()
+anzahl2023 = ((dfGesamt["EE_Anteil"] >= 100) & (dfGesamt["Datum von"].dt.year == 2023)).sum()
+anzahl2024 = ((dfGesamt["EE_Anteil"] >= 100) & (dfGesamt["Datum von"].dt.year == 2024)).sum()
+anzahl2025 = ((dfGesamt["EE_Anteil"] >= 100) & (dfGesamt["Datum von"].dt.year == 2025)).sum()
+anzahl2026 = ((dfGesamt["EE_Anteil"] >= 100) & (dfGesamt["Datum von"].dt.year == 2026)).sum()
+anzahlGesamt = anzahl2020 + anzahl2021 + anzahl2022 + anzahl2023 + anzahl2024 + anzahl2025 + anzahl2026
+print(anzahl2020)
+print(anzahl2021)
+print(anzahl2022)
+print(anzahl2023)
+print(anzahl2024)
+print(anzahl2025)
+print(anzahl2026)
+print(anzahlGesamt)
+
+# Viertelstunden mit mindestens 100 % EE-Anteil pro Jahr vergleichen.
+dfEEViertelstunden = pd.DataFrame({
+    "Jahr": [str(jahr) for jahr in range(2020, 2027)],
+    "Anzahl Viertelstunden": [
+        anzahl2020, anzahl2021, anzahl2022, anzahl2023,
+        anzahl2024, anzahl2025, anzahl2026,
+    ],
+})
+
+viertelstundendiagramm = px.bar(
+    dfEEViertelstunden,
+    x="Jahr",
+    y="Anzahl Viertelstunden",
+    text="Anzahl Viertelstunden",
+    title="Viertelstunden mit mindestens 100 % EE-Anteil: 2020–2026",
+    color_discrete_sequence=["#16a34a"],
+)
+viertelstundendiagramm.update_traces(
+    texttemplate="%{y:d}",
+    textposition="outside",
+    cliponaxis=False,
+    hovertemplate="Jahr %{x}<br>Viertelstunden mit EE-Anteil ≥ 100 %: %{y:d}<extra></extra>",
+)
+viertelstundendiagramm.update_layout(
+    template="plotly_white",
+    xaxis_type="category",
+    yaxis=dict(rangemode="tozero", tickformat="d"),
+    margin=dict(t=80, b=110),
+)
+
+# Teiljahre kennzeichnen, damit die absoluten Anzahlen richtig eingeordnet werden.
+hinweise = []
+for jahr in range(2020, 2027):
+    daten = dfGesamt.loc[dfGesamt["Datum von"].dt.year == jahr, "Datum von"]
+    erwarteteViertelstunden = (366 if pd.Timestamp(jahr, 1, 1).is_leap_year else 365) * 96
+    if daten.empty:
+        hinweise.append(f"{jahr}: keine Daten vorhanden")
+    elif len(daten) < erwarteteViertelstunden:
+        hinweise.append(f"{jahr}: unvollständiges Jahr, Daten bis {daten.max():%d.%m.%Y}")
+if hinweise:
+    viertelstundendiagramm.add_annotation(
+        x=0, y=-0.2, xref="paper", yref="paper",
+        text="<br>".join(hinweise), showarrow=False, xanchor="left",
+    )
+
+viertelstundendiagramm.show(renderer="browser")
