@@ -5,7 +5,7 @@ from BerechnungsFunktionen import haeufigkeitsverteilung_EE
 
 
 #Fenster Einrichten
-
+'''
 fenster = tk.Tk()   #Erstellen des Hauptfensters
 
 fenster.title("Energiesystem-Simulator V0.1")   # Fenstertitel festlegen
@@ -45,9 +45,10 @@ button = tk.Button(fenster,
                                                      ,ausgabeLabel
                                                      ,ausgabeStatus))   #Welche Funktion ausgeführt werden soll
 button.pack()
+'''
 
 haeufigkeitsverteilung_EE()
 
 
-fenster.mainloop()  # Startet die Ereignesverarbeitung des Fensters(Immer zum Ende)
+#fenster.mainloop()  # Startet die Ereignesverarbeitung des Fensters(Immer zum Ende)
     

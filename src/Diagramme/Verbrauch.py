@@ -1,8 +1,15 @@
 import pandas as pd
 import plotly.express as px
+import matplotlib.pyplot as plt
+import numpy as np
+
+import matplotlib.dates as mdates
+from matplotlib.ticker import FixedLocator
+import matplotlib
+matplotlib.use('TkAgg')
 
 dfGesamt = pd.read_csv(
-    "data/bereinigt/SMARD_Gesamt_Bereinigt.csv",
+    "IPJ-Simulations-Software/data/bereinigt/SMARD_Gesamt_Bereinigt.csv",
     sep=";",    
     decimal=",",    #Pandas erklären das es ein Dezimalzeichen ist
     thousands=".",   #Pandas erklären das es ein 1000 Zeichen
@@ -16,17 +23,20 @@ format="%d.%m.%Y %H:%M"
 dfGesamt["Datum bis"] = pd.to_datetime(
 dfGesamt["Datum bis"],
 format="%d.%m.%Y %H:%M"
-)   
+) 
 
 
 dfJahresStatistik = pd.read_csv(
-    "data/bereinigt/SMARD_Jahresstatistik.csv",
+    "IPJ-Simulations-Software/data/bereinigt/SMARD_Jahresstatistik.csv",
     sep=";",    
     decimal=",",    #Pandas erklären das es ein Dezimalzeichen ist
     thousands=".",   #Pandas erklären das es ein 1000 Zeichen
     na_values=["-"]
 )
 
+dfJahresStatistik = dfJahresStatistik.sort_values("Datum von")
+dfJahresStatistik["Jahr"] = dfJahresStatistik["Datum von"].astype(str)
+dfJahresStatistik["Verbrauch [TWh]"] = (dfJahresStatistik["Netzlast [MWh] Originalauflösungen"] / 1000000)
 
 '''
 # Die Jahresstatistik enthält bereits die Summe des Verbrauchs je Jahr.
@@ -71,7 +81,7 @@ diagramm.show(renderer="browser")
 
 # Nur 2020 und 2026 auswählen
 dfGefiltert = dfGesamt.loc[
-    dfGesamt["Datum von"].dt.year.isin([2020,2022,2025])
+    dfGesamt["Datum von"].dt.year.isin([2020,2022,2025]) 
 ].copy()
 
 # Neue Spalten für Jahr und Monat erstellen
@@ -122,6 +132,7 @@ for jahr in [2020,2022,2025]:
     monatsdaten_pro_jahr.append(dfMonate)
 
 dfMonatsvergleich = pd.concat(monatsdaten_pro_jahr, ignore_index=True)
+'''
 monatsdiagramm = px.bar(
     dfMonatsvergleich,
     x="Monat",
@@ -163,6 +174,7 @@ monatsdiagramm.add_annotation(
     text="<br>".join(hinweise), showarrow=False, xanchor="left",
 )
 monatsdiagramm.show(renderer="browser")
+'''
 
 
 
@@ -170,17 +182,69 @@ dfTagSommer = dfGesamt.loc[
     dfGesamt["Datum von"].dt.date == pd.Timestamp("2025-07-01").date(),["Datum von", "Netzlast [MWh] Originalauflösungen"]
 ].copy()
 
+
+
+plt.figure(figsize=(14,6))
+plt.plot(dfTagSommer["Datum von"], dfTagSommer["Netzlast [MWh] Originalauflösungen"])
+plt.xlim(pd.Timestamp("00:00"), pd.Timestamp("23:59"))
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+plt.gca().xaxis.set_major_locator(FixedLocator(pd.date_range(start="00:00", end= "23:59", freq="15T").time))
+plt.xlabel("Uhrzeit")
+plt.ylabel("Netzlast in MWh")
+plt.title("Netzlast über einen Tag im Sommer")
+#plt.grid(True, linestyle="--", alpha=0.6)
+plt.show()
+
+
 dfTagHerbst = dfGesamt.loc[
     dfGesamt["Datum von"].dt.date == pd.Timestamp("2025-10-01").date(),["Datum von", "Netzlast [MWh] Originalauflösungen"]
 ].copy()
+
+plt.plot(dfTagHerbst["Datum von"], dfTagHerbst["Netzlast [MWh] Originalauflösungen"])
+plt.xlabel("Jahr")
+plt.ylabel("Netzlast in MWh")
+plt.show()
 
 dfTagWinter = dfGesamt.loc[
     dfGesamt["Datum von"].dt.date == pd.Timestamp("2026-01-01").date(),["Datum von", "Netzlast [MWh] Originalauflösungen"]
 ].copy()
 
+plt.plot(dfTagWinter["Datum von"], dfTagWinter["Netzlast [MWh] Originalauflösungen"])
+plt.xlabel("Jahr")
+plt.ylabel("Netzlast in MWh")
+plt.show()
+
 dfTagFruehling = dfGesamt.loc[
     dfGesamt["Datum von"].dt.date == pd.Timestamp("2026-04-01").date(),["Datum von", "Netzlast [MWh] Originalauflösungen"]
 ].copy()
+
+plt.plot(dfTagFruehling["Datum von"], dfTagFruehling["Netzlast [MWh] Originalauflösungen"])
+plt.xlabel("Jahr")
+plt.ylabel("Netzlast in MWh")
+plt.show()
+
+#Diagramm Jahresübersicht 2020-2026
+plt.bar(dfJahresStatistik["Jahr"], dfJahresStatistik["Verbrauch [TWh]"], width=0.8)
+plt.xlabel("Jahr")
+plt.ylabel("Netzlast in TWh")
+plt.legend()
+plt.show()
+
+#Monatsdarstelling von 2020,2022,2025
+plt.bar(dfMonate["Monat"], dfMonate["Verbrauch [TWh]"], width=0.8)
+plt.bar()
+plt.bar()
+plt.xlabel("Monate")
+plt.ylabel("Netzlast in TWh")
+plt.legend()
+plt.show()
+
+#Pivot-Tabelle erstellen
+#Übersicht Monate+Vergleich 2020,2022,2025
+
+
+
+
 
 
 '''
