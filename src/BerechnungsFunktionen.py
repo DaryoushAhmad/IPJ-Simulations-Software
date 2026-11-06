@@ -41,7 +41,7 @@ def erzeuge_ee_histogramm(df_eingabe):
         color_discrete_sequence=["#2ecc71"]
     )
     
-    #10% lücke tzwischen balken
+    #5% lücke zwischen balken
     fig.update_layout(bargap=0.05, title_font_size=18, hovermode="x unified",
                       xaxis_title="Erneuerbarer Anteil [%]",
                       yaxis_title="Anzahl Viertelstunden")
