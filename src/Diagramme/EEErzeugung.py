@@ -150,14 +150,14 @@ dfTagHerbst = dfGesamt.loc[
 ].copy()
 
 dfTagWinter = dfGesamt.loc[
-    dfGesamt["Datum von"].dt.date == pd.Timestamp("2026-01-01").date(),["Datum von", "EE_Erzeugung"]
+    dfGesamt["Datum von"].dt.date == pd.Timestamp("2025-01-01").date(),["Datum von", "EE_Erzeugung"]
 ].copy()
 
 dfTagFruehling = dfGesamt.loc[
-    dfGesamt["Datum von"].dt.date == pd.Timestamp("2026-04-01").date(),["Datum von", "EE_Erzeugung"]
+    dfGesamt["Datum von"].dt.date == pd.Timestamp("2025-04-01").date(),["Datum von", "EE_Erzeugung"]
 ].copy()
 
-'''
+
 # Pro Jahreszeit ein Liniendiagramm mit der Energie je Viertelstunde.
 tagesdaten = [
     ("Frühling", dfTagFruehling),
@@ -211,7 +211,7 @@ for jahreszeit, dfTag in tagesdaten:
         yaxis=dict(range=[0, max_erzeugung * 1.1]),
     )
     diagramm.show(renderer="browser")
-'''
+
 #======================================================================
 
 dfGesamt["Erzeugung Gesamt"] = dfGesamt["EE_Erzeugung"] + dfGesamt["Braunkohle [MWh] Originalauflösungen"] + dfGesamt["Steinkohle [MWh] Originalauflösungen"] + dfGesamt["Erdgas [MWh] Originalauflösungen"] + dfGesamt["Kernenergie [MWh] Originalauflösungen"] + dfGesamt["Pumpspeicher [MWh] Originalauflösungen_x"] + dfGesamt["Sonstige Konventionelle [MWh] Originalauflösungen"]
@@ -319,6 +319,7 @@ print(anzahl2025)
 print(anzahl2026)
 print(anzahlGesamt)
 
+'''
 # Viertelstunden mit mindestens 100 % EE-Anteil pro Jahr vergleichen.
 dfEEViertelstunden = pd.DataFrame({
     "Jahr": [str(jahr) for jahr in range(2020, 2027)],
@@ -365,3 +366,4 @@ if hinweise:
     )
 
 viertelstundendiagramm.show(renderer="browser")
+'''

@@ -83,6 +83,8 @@ df20_26 = dfGefiltert.groupby(
     ["Jahr", "Monat"], as_index=False
 )["Netzlast [MWh] Originalauflösungen"].sum()
 
+
+'''
 #Diagramm plotten von chat
 # Gemeinsamer Monatsvergleich
 
@@ -163,7 +165,7 @@ monatsdiagramm.add_annotation(
     text="<br>".join(hinweise), showarrow=False, xanchor="left",
 )
 monatsdiagramm.show(renderer="browser")
-
+'''
 
 
 dfTagSommer = dfGesamt.loc[
@@ -175,15 +177,15 @@ dfTagHerbst = dfGesamt.loc[
 ].copy()
 
 dfTagWinter = dfGesamt.loc[
-    dfGesamt["Datum von"].dt.date == pd.Timestamp("2026-01-01").date(),["Datum von", "Netzlast [MWh] Originalauflösungen"]
+    dfGesamt["Datum von"].dt.date == pd.Timestamp("2025-01-01").date(),["Datum von", "Netzlast [MWh] Originalauflösungen"]
 ].copy()
 
 dfTagFruehling = dfGesamt.loc[
-    dfGesamt["Datum von"].dt.date == pd.Timestamp("2026-04-01").date(),["Datum von", "Netzlast [MWh] Originalauflösungen"]
+    dfGesamt["Datum von"].dt.date == pd.Timestamp("2025-04-01").date(),["Datum von", "Netzlast [MWh] Originalauflösungen"]
 ].copy()
 
 
-'''
+
 #Diagram für die 4 Tage von chat
 
 # Die Netzlast enthält die verbrauchte Energie je 15-Minuten-Intervall.
@@ -232,7 +234,7 @@ for jahreszeit, dfTag in tagesdaten:
         yaxis=dict(range=[0, max_verbrauch * 1.1]),
     )
     diagramm.show(renderer="browser")
-'''
+
 
 
 
