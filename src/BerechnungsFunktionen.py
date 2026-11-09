@@ -68,7 +68,7 @@ def erzeuge_ee_histogramm(df_eingabe):
 
 
 
-
+#---------- Funktion zum erstellen eines Kreisdiagtramms ----------
 def erzeuge_kreisdiagram_spalten(df_eingabe):
     #erzeugungsspalten auswählen
     spalten_erzeugung=["Biomasse [MWh] Originalauflösungen","Wasserkraft [MWh] Originalauflösungen","Wind Offshore [MWh] Originalauflösungen","Wind Onshore [MWh] Originalauflösungen","Photovoltaik [MWh] Originalauflösungen","Sonstige Erneuerbare [MWh] Originalauflösungen","Kernenergie [MWh] Originalauflösungen","Braunkohle [MWh] Originalauflösungen","Steinkohle [MWh] Originalauflösungen","Erdgas [MWh] Originalauflösungen","Pumpspeicher [MWh] Originalauflösungen_x","Sonstige Konventionelle [MWh] Originalauflösungen",]
@@ -99,3 +99,32 @@ def erzeuge_kreisdiagram_spalten(df_eingabe):
     
     return fig
     
+    
+#---------- Funktion zum erstellen eines gestapelten Flächendiagramms ----------
+def erzeuge_zeitreihen_chart(df_eingabe):
+    spalten_erzeugung=["Biomasse [MWh] Originalauflösungen","Wasserkraft [MWh] Originalauflösungen","Wind Offshore [MWh] Originalauflösungen","Wind Onshore [MWh] Originalauflösungen","Photovoltaik [MWh] Originalauflösungen","Sonstige Erneuerbare [MWh] Originalauflösungen","Kernenergie [MWh] Originalauflösungen","Braunkohle [MWh] Originalauflösungen","Steinkohle [MWh] Originalauflösungen","Erdgas [MWh] Originalauflösungen","Pumpspeicher [MWh] Originalauflösungen_x","Sonstige Konventionelle [MWh] Originalauflösungen",]
+    #spalten_erzeugung=spalten_erzeugung.str.replace(" [MWh] Originalauflösungen", "", regex=False) funktioniert nicht
+    
+    fig=px.area(
+        data_frame=df_eingabe,
+        x="Datum von",
+        y=spalten_erzeugung,
+        title="Stromerzeugung nach Energieträgern im Zeitverlauf",
+    )
+    
+    #beschriftungen bereinigen, damit nicht "Orginalaufösungen steht"
+    fig.for_each_trace(
+        lambda trace: trace.update(
+            name=trace.name.replace(" [MWh] Originalauflösungen", "")
+        )
+    )
+    
+    fig.update_layout(
+        hovermode="x unified",
+        height=650,
+        xaxis_title="Datum/ Uhrzeit",
+        yaxis_title="Erzeugung [MWh]",
+    )
+    
+    
+    return fig
