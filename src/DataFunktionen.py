@@ -20,7 +20,7 @@ def setUpGesamtcsv():
     format="%d.%m.%Y %H:%M"
     )   
     
-    # geändert
+    # geändert kai
     dfGesamt["Datum von"] = pd.to_datetime(dfGesamt["Datum von"], format="%d.%m.%Y %H:%M", errors="coerce")   #die spalten in echte pandas datenobjekte umwandeln
     dfGesamt["Datum bis"] = pd.to_datetime(dfGesamt["Datum bis"], format="%d.%m.%Y %H:%M", errors="coerce")
     # end geändert

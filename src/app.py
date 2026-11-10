@@ -1,4 +1,5 @@
 # hauptdatei für die UI
+#kai
 
 # ausführen:       1.         app.py in integrierten Terminal öffnen
 #                  2.         python -m streamlit run app.py
@@ -205,36 +206,36 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
 
 
 #---------- wärmepumpem ----------
-    st.divider()
-    st.subheader("Wärmepumpen-Parameter")
+    #st.divider()
+    #st.subheader("neue Parameter")
     
     #2030
-    st.write("Jahr 2030")
+    #st.write("Jahr 2030")
     
     #2 spalten erstellen für verbrauch installierte wp(stück) + wärmebedarf
-    col_links, col_rechts=st.columns(2)
-    with col_links:
-        szenario_eingabe_installierte_wp_2030=st.number_input(
-            "Installierte WP(Stück)", value=3000000
-        )
+    #col_links, col_rechts=st.columns(2)
+    #with col_links:
+     #   szenario_eingabe_installierte_wp_2030=st.number_input(
+      #      "Installierte WP(Stück)", value=3000000
+       # )
            
-    with col_rechts:
-        szenario_waermebedarf_wp_in_kwprojahr_2030=st.number_input(
-            "Wärmebedarf/Wp[kWh/Jahr]", value=51000
-        )
+    #with col_rechts:
+     #   szenario_waermebedarf_wp_in_kwprojahr_2030=st.number_input(
+      #      "Wärmebedarf/Wp[kWh/Jahr]", value=51000
+       # )
         
         
     #2 spalten erstellen für cop und wetterdaten
-    col_links, col_rechts=st.columns(2)
-    with col_links:
-        szenario_eingabe_cop_2030=st.number_input(
-            "COP Ø 2030", value=3.40
-        )
+    #col_links, col_rechts=st.columns(2)
+    #with col_links:
+    #    szenario_eingabe_cop_2030=st.number_input(
+    #        "COP Ø 2030", value=3.40
+    #    )
         
-    with col_rechts:
-        szenario_eingabe_wetterdaten_2030=st.number_input(
-            "Wetterdaten"
-        )
+    #with col_rechts:
+    #    szenario_eingabe_wetterdaten_2030=st.number_input(
+     #       "Wetterdaten"
+     #   )
         
         
         
