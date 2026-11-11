@@ -49,27 +49,27 @@ def erzeuge_ee_histogramm(df_eingabe):
                       )
     
     
-    
-    fig.update_layout(
-        template="plotly_white", #geändert
-        paper_bgcolor="white", #geändert
-        plot_bgcolor="white", #geändert
-        font=dict(color="black"),
-        xaxis=dict(
-            tickfont=dict(color="black", size=28),
-            title_font=dict(color="black", size=28),
-            gridcolor="#E5E7EB"
-        ),
-        yaxis=dict(
-            tickfont=dict(color="black", size=28),
-            title_font=dict(color="black", size=28),
-            gridcolor="#E5E7EB"
-        ),
+    #geändert
+    #fig.update_layout(
+    #    template="plotly_white", #geändert
+    #    paper_bgcolor="white", #geändert
+    #    plot_bgcolor="white", #geändert
+    #    font=dict(color="black"),
+    #    xaxis=dict(
+    #        tickfont=dict(color="black", size=28),
+    #        title_font=dict(color="black", size=28),
+    #        gridcolor="#E5E7EB"
+    #    ),
+    #    yaxis=dict(
+    #        tickfont=dict(color="black", size=28),
+    #        title_font=dict(color="black", size=28),
+    #        gridcolor="#E5E7EB"
+    #    ),
         
         
-        font_color="#111111", #geändert
+    #    font_color="#111111", #geändert
        
-    )
+    #)
     
     #rote linie bei 100% deckung
     fig.add_vline(x=100,
@@ -78,7 +78,7 @@ def erzeuge_ee_histogramm(df_eingabe):
                   line_width=2,
                   annotation_text="100% Deckung",
                   annotation_position="top right",
-                  annotation_font=dict(color="black", size=28), #geändert
+                  annotation_font=dict(color="black", size=14), #geändert
                   )
     
     #gelbe linie bei 80% deckung
@@ -88,7 +88,7 @@ def erzeuge_ee_histogramm(df_eingabe):
                       line_width=2,
                       annotation_text="80% Deckung",
                       annotation_position="top right",
-                      annotation_font=dict(color="black", size=28), #geändert
+                      annotation_font=dict(color="black", size=14), #geändert
                       )
     
     return fig
