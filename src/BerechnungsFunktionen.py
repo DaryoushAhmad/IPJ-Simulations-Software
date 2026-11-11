@@ -78,7 +78,7 @@ def erzeuge_ee_histogramm(df_eingabe):
                   line_width=2,
                   annotation_text="100% Deckung",
                   annotation_position="top right",
-                  annotation_font=dict(color="black", size=14), #geändert
+                  annotation_font=dict(color="white", size=14), #geändert
                   )
     
     #gelbe linie bei 80% deckung
