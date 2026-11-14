@@ -119,9 +119,63 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
         "Szenario-Name", value="(erforderlich)"
     )
     
-    szenario_beschreibung=st.text_area(
-        "Szenario-Beschreibung", value="(erforderlich)"
+    #szenario_beschreibung=st.text_area(
+    #    "Szenario-Beschreibung", value="(erforderlich)"
+    #)
+
+
+    #==================Für die Simulation==================
+    from Simulation import simuliere_ee
+
+    faktor_pv = 1
+    faktor_onshore = 1
+    faktor_offshore = 1
+
+    szenario_beschreibung = st.text_area(
+    "Szenario-Beschreibung", value="(erforderlich)"
     )
+
+    # Erneuerbare Energien
+    st.subheader("Ausbau der erneuerbaren Energien")
+
+    with st.form("simulation_form"):
+
+        faktor_pv = st.number_input(
+            "Photovoltaik-Faktor",
+            min_value=0.0,
+            value=1.0,
+            step=0.1
+        )
+
+        faktor_onshore = st.number_input(
+            "Wind-Onshore-Faktor",
+            min_value=0.0,
+            value=1.0,
+            step=0.1
+        )
+
+        faktor_offshore = st.number_input(
+            "Wind-Offshore-Faktor",
+            min_value=0.0,
+            value=1.0,
+            step=0.1
+        )
+
+        simulation_starten = st.form_submit_button(
+            "Simulation starten"
+        )
+
+    if simulation_starten:
+
+        ergebnis = simuliere_ee(
+            faktor_pv,
+            faktor_onshore,
+            faktor_offshore
+        )
+
+        st.subheader("Simulationsergebnisse")
+        st.dataframe(ergebnis.head(12))
+
     
     # #2 spalten erstellen für version und autor
     # col_links, col_rechts=st.columns(2)
@@ -243,8 +297,8 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
         
         
         
-#----------------------------------------------------------------------
-        
+#---------------------------für die Simulation----------------------------------
+
         
   
 

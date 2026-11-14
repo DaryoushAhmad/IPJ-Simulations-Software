@@ -22,6 +22,8 @@ dfGesamt["EE_Anteil"] = dfGesamt["EE_Erzeugung"]/dfGesamt["Verbrauch 2025 [MWh]"
 EE_Anteil_Mittel = dfGesamt["EE_Anteil"].mean()
 print("EE-Anteil im Mittel: ", EE_Anteil_Mittel)
 
+
+
 #Plotten=======================================
 
 ee_intervallgrenzen = list(range(0, 170, 10))
