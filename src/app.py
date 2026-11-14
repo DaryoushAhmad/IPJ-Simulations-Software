@@ -1,4 +1,5 @@
 # hauptdatei für die UI
+#kai
 
 # ausführen:       1.         app.py in integrierten Terminal öffnen
 #                  2.         python -m streamlit run app.py
@@ -118,132 +119,186 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
         "Szenario-Name", value="(erforderlich)"
     )
     
-    szenario_beschreibung=st.text_area(
-        "Szenario-Beschreibung", value="(erforderlich)"
+    #szenario_beschreibung=st.text_area(
+    #    "Szenario-Beschreibung", value="(erforderlich)"
+    #)
+
+
+    #==================Für die Simulation==================
+    from Simulation import simuliere_ee
+
+    faktor_pv = 1
+    faktor_onshore = 1
+    faktor_offshore = 1
+
+    szenario_beschreibung = st.text_area(
+    "Szenario-Beschreibung", value="(erforderlich)"
     )
-    
-    #2 spalten erstellen für version und autor
-    col_links, col_rechts=st.columns(2)
-    with col_links:
-        szenario_version=st.text_input(
-            "Szenario-Version", value="(erforderlich)"
-        )
-    with col_rechts:
-        szenario_autor=st.text_input(
-            "Szenario-Autor", value="(erforderlich)"
-        )
-    st.divider()
 
+    # Erneuerbare Energien
+    st.subheader("Ausbau der erneuerbaren Energien")
 
-#abschnitt last(verbrauch) pro sektor ----------
-    st.subheader("Last(verbrauch)-pro Sektor")
-    st.write("Haushalte(Standardlastprofil)")
-    
-    
-    szenario_lastprofil_haushalt_basis=st.text_input(
-            "Lastprofil für Haushalt_Basis", value=""
-        )
-    
-    
-    #2 spalten erstellen für verbrauch hausalte 2030 und 2045
-    col_links, col_rechts=st.columns(2)
-    with col_links:
-        szenario_eingabe_verbrauch_haushalt_2030=st.number_input(
-            "Verbrauch Haushalte[TWh] 2030", value=120
-        )
-    with col_rechts:
-        szenario_eingabe_verbrauch_haushalt_2045=st.number_input(
-            "Verbrauch Haushalte[TWh] 2045", value=120
-        )
-        
-        
-        
-        
-        
-    #---------- gewerbe ----------
-    st.write("Gewerbe")
-    
-    szenario_lastprofil_gewerbe_basis=st.text_input(
-                "Lastprofil für Gewerbe_Basis", value=""
-            )
-    
-    
-    #2 spalten erstellen für verbrauch gewerbe 2030 und 2045
-    col_links, col_rechts=st.columns(2)
-    with col_links:
-        szenario_eingabe_verbrauch_gewerbe_2030=st.number_input(
-            "Verbrauch Gewerbe[TWh] 2030", value=140
-        )
-        
-    with col_rechts:
-        szenario_eingabe_verbrauch_gewerbe_2045=st.number_input(
-            "Verbrauch Gewerbe[TWh] 2045", value=130
+    with st.form("simulation_form"):
+
+        faktor_pv = st.number_input(
+            "Photovoltaik-Faktor",
+            min_value=0.0,
+            value=1.0,
+            step=0.1
         )
 
-
-
-#---------- landwirtschaft ----------
-    st.write("Landwirtschaft")
-    
-    szenario_lastprofil_landwirtschaft_basis=st.text_input(
-                "Lastprofil für Landwirtschaft_Basis", value=""
-            )
-    
-    
-    #2 spalten erstellen für verbrauch landwirtschaft 2030 und 2045
-    col_links, col_rechts=st.columns(2)
-    with col_links:
-        szenario_eingabe_verbrauch_landwirtschaft_2030=st.number_input(
-            "Verbrauch Landwirtschaft[TWh] 2030", value=300
+        faktor_onshore = st.number_input(
+            "Wind-Onshore-Faktor",
+            min_value=0.0,
+            value=1.0,
+            step=0.1
         )
+
+        faktor_offshore = st.number_input(
+            "Wind-Offshore-Faktor",
+            min_value=0.0,
+            value=1.0,
+            step=0.1
+        )
+
+        simulation_starten = st.form_submit_button(
+            "Simulation starten"
+        )
+
+    if simulation_starten:
+
+        ergebnis = simuliere_ee(
+            faktor_pv,
+            faktor_onshore,
+            faktor_offshore
+        )
+
+        st.subheader("Simulationsergebnisse")
+        st.dataframe(ergebnis.head(12))
+
+    
+    # #2 spalten erstellen für version und autor
+    # col_links, col_rechts=st.columns(2)
+    # with col_links:
+    #     szenario_version=st.text_input(
+    #         "Szenario-Version", value="(erforderlich)"
+    #     )
+    # with col_rechts:
+    #     szenario_autor=st.text_input(
+    #         "Szenario-Autor", value="(erforderlich)"
+    #     )
+    # st.divider()
+
+
+# #abschnitt last(verbrauch) pro sektor ----------
+#     st.subheader("Last(verbrauch)-pro Sektor")
+#     st.write("Haushalte(Standardlastprofil)")
+    
+    
+#     szenario_lastprofil_haushalt_basis=st.text_input(
+#             "Lastprofil für Haushalt_Basis", value=""
+#         )
+    
+    
+    # #2 spalten erstellen für verbrauch hausalte 2030 und 2045
+    # col_links, col_rechts=st.columns(2)
+    # with col_links:
+    #     szenario_eingabe_verbrauch_haushalt_2030=st.number_input(
+    #         "Verbrauch Haushalte[TWh] 2030", value=120
+    #     )
+    # with col_rechts:
+    #     szenario_eingabe_verbrauch_haushalt_2045=st.number_input(
+    #         "Verbrauch Haushalte[TWh] 2045", value=120
+    #     )
         
-    with col_rechts:
-        szenario_eingabe_verbrauch_landwirtschaft_2045=st.number_input(
-            "Verbrauch Landwirtschaft[TWh] 2045", value=350
-        )
+        
+        
+        
+        
+    # #---------- gewerbe ----------
+    # st.write("Gewerbe")
+    
+    # szenario_lastprofil_gewerbe_basis=st.text_input(
+    #             "Lastprofil für Gewerbe_Basis", value=""
+    #         )
+    
+    
+    # #2 spalten erstellen für verbrauch gewerbe 2030 und 2045
+    # col_links, col_rechts=st.columns(2)
+    # with col_links:
+    #     szenario_eingabe_verbrauch_gewerbe_2030=st.number_input(
+    #         "Verbrauch Gewerbe[TWh] 2030", value=140
+    #     )
+        
+    # with col_rechts:
+    #     szenario_eingabe_verbrauch_gewerbe_2045=st.number_input(
+    #         "Verbrauch Gewerbe[TWh] 2045", value=130
+    #     )
+
+
+
+# #---------- landwirtschaft ----------
+#     st.write("Landwirtschaft")
+    
+#     szenario_lastprofil_landwirtschaft_basis=st.text_input(
+#                 "Lastprofil für Landwirtschaft_Basis", value=""
+#             )
+    
+    
+#     #2 spalten erstellen für verbrauch landwirtschaft 2030 und 2045
+#     col_links, col_rechts=st.columns(2)
+#     with col_links:
+#         szenario_eingabe_verbrauch_landwirtschaft_2030=st.number_input(
+#             "Verbrauch Landwirtschaft[TWh] 2030", value=300
+#         )
+        
+#     with col_rechts:
+#         szenario_eingabe_verbrauch_landwirtschaft_2045=st.number_input(
+#             "Verbrauch Landwirtschaft[TWh] 2045", value=350
+#         )
 
 
 
 #---------- wärmepumpem ----------
-    st.divider()
-    st.subheader("Wärmepumpen-Parameter")
+    #st.divider()
+    #st.subheader("neue Parameter")
     
     #2030
-    st.write("Jahr 2030")
+    #st.write("Jahr 2030")
     
     #2 spalten erstellen für verbrauch installierte wp(stück) + wärmebedarf
-    col_links, col_rechts=st.columns(2)
-    with col_links:
-        szenario_eingabe_installierte_wp_2030=st.number_input(
-            "Installierte WP(Stück)", value=3000000
-        )
+    #col_links, col_rechts=st.columns(2)
+    #with col_links:
+     #   szenario_eingabe_installierte_wp_2030=st.number_input(
+      #      "Installierte WP(Stück)", value=3000000
+       # )
            
-    with col_rechts:
-        szenario_waermebedarf_wp_in_kwprojahr_2030=st.number_input(
-            "Wärmebedarf/Wp[kWh/Jahr]", value=51000
-        )
+    #with col_rechts:
+     #   szenario_waermebedarf_wp_in_kwprojahr_2030=st.number_input(
+      #      "Wärmebedarf/Wp[kWh/Jahr]", value=51000
+       # )
         
         
     #2 spalten erstellen für cop und wetterdaten
-    col_links, col_rechts=st.columns(2)
-    with col_links:
-        szenario_eingabe_cop_2030=st.number_input(
-            "COP Ø 2030", value=3.40
-        )
+    #col_links, col_rechts=st.columns(2)
+    #with col_links:
+    #    szenario_eingabe_cop_2030=st.number_input(
+    #        "COP Ø 2030", value=3.40
+    #    )
         
-    with col_rechts:
-        szenario_eingabe_wetterdaten_2030=st.number_input(
-            "Wetterdaten"
-        )
-        
-        
+    #with col_rechts:
+    #    szenario_eingabe_wetterdaten_2030=st.number_input(
+     #       "Wetterdaten"
+     #   )
         
         
         
         
         
-#----------------------------------------------------------------------
         
+        
+#---------------------------für die Simulation----------------------------------
+
         
   
 

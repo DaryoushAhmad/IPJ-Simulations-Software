@@ -30,7 +30,7 @@ def haeufigkeitsverteilung_EE():
     fig.show()
     
     
-    
+    #kai
 def erzeuge_ee_histogramm(df_eingabe):
     fig=px.histogram(
         data_frame=df_eingabe,
@@ -44,7 +44,32 @@ def erzeuge_ee_histogramm(df_eingabe):
     #5% lücke zwischen balken
     fig.update_layout(bargap=0.05, title_font_size=18, hovermode="x unified",
                       xaxis_title="Erneuerbarer Anteil [%]",
-                      yaxis_title="Anzahl Viertelstunden")
+                      yaxis_title="Anzahl Viertelstunden",
+                      height=700,
+                      )
+    
+    
+    #geändert
+    #fig.update_layout(
+    #    template="plotly_white", #geändert
+    #    paper_bgcolor="white", #geändert
+    #    plot_bgcolor="white", #geändert
+    #    font=dict(color="black"),
+    #    xaxis=dict(
+    #        tickfont=dict(color="black", size=28),
+    #        title_font=dict(color="black", size=28),
+    #        gridcolor="#E5E7EB"
+    #    ),
+    #    yaxis=dict(
+    #        tickfont=dict(color="black", size=28),
+    #        title_font=dict(color="black", size=28),
+    #        gridcolor="#E5E7EB"
+    #    ),
+        
+        
+    #    font_color="#111111", #geändert
+       
+    #)
     
     #rote linie bei 100% deckung
     fig.add_vline(x=100,
@@ -52,7 +77,8 @@ def erzeuge_ee_histogramm(df_eingabe):
                   line_color="red",
                   line_width=2,
                   annotation_text="100% Deckung",
-                  annotation_position="top right"
+                  annotation_position="top right",
+                  annotation_font=dict(color="white", size=14), #geändert
                   )
     
     #gelbe linie bei 80% deckung
@@ -61,7 +87,8 @@ def erzeuge_ee_histogramm(df_eingabe):
                       line_color="yellow",
                       line_width=2,
                       annotation_text="80% Deckung",
-                      annotation_position="top right"
+                      annotation_position="top right",
+                      annotation_font=dict(color="white", size=14), #geändert
                       )
     
     return fig
@@ -69,6 +96,7 @@ def erzeuge_ee_histogramm(df_eingabe):
 
 
 #---------- Funktion zum erstellen eines Kreisdiagtramms ----------
+#kai
 def erzeuge_kreisdiagram_spalten(df_eingabe):
     #erzeugungsspalten auswählen
     spalten_erzeugung=["Biomasse [MWh] Originalauflösungen","Wasserkraft [MWh] Originalauflösungen","Wind Offshore [MWh] Originalauflösungen","Wind Onshore [MWh] Originalauflösungen","Photovoltaik [MWh] Originalauflösungen","Sonstige Erneuerbare [MWh] Originalauflösungen","Kernenergie [MWh] Originalauflösungen","Braunkohle [MWh] Originalauflösungen","Steinkohle [MWh] Originalauflösungen","Erdgas [MWh] Originalauflösungen","Pumpspeicher [MWh] Originalauflösungen_x","Sonstige Konventionelle [MWh] Originalauflösungen",]
@@ -101,6 +129,7 @@ def erzeuge_kreisdiagram_spalten(df_eingabe):
     
     
 #---------- Funktion zum erstellen eines gestapelten Flächendiagramms ----------
+#kai
 def erzeuge_zeitreihen_chart(df_eingabe):
     spalten_erzeugung=["Biomasse [MWh] Originalauflösungen","Wasserkraft [MWh] Originalauflösungen","Wind Offshore [MWh] Originalauflösungen","Wind Onshore [MWh] Originalauflösungen","Photovoltaik [MWh] Originalauflösungen","Sonstige Erneuerbare [MWh] Originalauflösungen","Kernenergie [MWh] Originalauflösungen","Braunkohle [MWh] Originalauflösungen","Steinkohle [MWh] Originalauflösungen","Erdgas [MWh] Originalauflösungen","Pumpspeicher [MWh] Originalauflösungen_x","Sonstige Konventionelle [MWh] Originalauflösungen",]
     #spalten_erzeugung=spalten_erzeugung.str.replace(" [MWh] Originalauflösungen", "", regex=False) funktioniert nicht
