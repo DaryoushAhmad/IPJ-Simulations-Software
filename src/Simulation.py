@@ -4,9 +4,11 @@ from DataFunktionen import setUpErzeugerProfil
 PV_Installiert = 118.111
 windOnShore_Installiert = 68.179
 windOffShore_Installiert = 9.733   
+biomasse_Installiert = 0
+wasserkraft_Installiert = 0
 
 
-def simuliere_ee(faktor_pv, faktor_onshore, faktor_offshore):
+def simuliere_ee(faktor_pv, faktor_onshore, faktor_offshore, faktor_biomasse, faktor_wasserkraft, faktor_verbrauch=1.0):
     
 
     # Erzeugerprofil einlesen
@@ -23,15 +25,14 @@ def simuliere_ee(faktor_pv, faktor_onshore, faktor_offshore):
         * 2.5
     )
 
-    # Photovoltaik Simulieren
+    # Wind Onshore Simulieren
     dfSimulation["Wind Onshore [MWh]"] = (
         dfProfil["Wind Onshore"]
         * windOnShore_Installiert
         * faktor_onshore
         * 2.5
     )
-
-    # Photovoltaik Simulieren
+    # Wind Offshore Simulieren
     dfSimulation["Wind Offshore [MWh]"] = (
         dfProfil["Wind Offshore"]
         * windOffShore_Installiert
@@ -39,12 +40,108 @@ def simuliere_ee(faktor_pv, faktor_onshore, faktor_offshore):
         * 2.5
     )
 
+    # Biomasse Simulieren
+    dfSimulation["Biomasse [MWh]"] = (
+        dfProfil["Biomasse"]
+        * biomasse_Installiert
+        * faktor_biomasse
+        * 2.5
+    )
+
+    # Wasserkraft Simulieren
+    dfSimulation["Wasserkraft [MWh]"] = (
+        dfProfil["Wasserkraft"]
+        * wasserkraft_Installiert
+        * faktor_wasserkraft
+        * 2.5
+    )
+
+    # Verbrauch "Simulieren"
+    dfSimulation["Verbrauch [MWh]"] = (
+        dfProfil["Verbrauch 2025 [MWh]"]
+        * faktor_verbrauch
+    )
+
+    
+    # EE Erzeugung berechnen
     dfSimulation["EE_Erzeugung [MWh]"] = (
         dfSimulation["PV [MWh]"] 
         + dfSimulation["Wind Onshore [MWh]"]
         + dfSimulation["Wind Offshore [MWh]"]
+        + dfSimulation["Biomasse [MWh]"]
+        + dfSimulation["Wasserkraft [MWh]"]
     )
 
-    # Weiter EE Ezeuger berücksichtigen...
+
+    # Bilanz berechnen
+    dfSimulation["Bilanz [MWh]"] = (
+        dfSimulation["EE_Erzeugung [MWh]"]
+        - dfSimulation["Verbrauch [MWh]"]
+    )
+
+    # Überschuss berechnen
+    dfSimulation["Ueberschuss [MWh]"] = (
+        dfSimulation["Bilanz [MWh]"].clip(lower=0) # clip() bedeutet alle negativen werte mit 0 ersetzen
+    )
+
+    # Fehlmenge berechnen
+    dfSimulation["Fehlmenge [MWh]"] = (
+        (-dfSimulation["Bilanz [MWh]"]).clip(lower=0) # (-) beachten
+    )
+
+    dfSimulation["Direkt genutzt [MWh]"] = (
+        dfSimulation[
+            ["EE_Erzeugung [MWh]", "Verbrauch [MWh]"]
+        ].min(axis=1)
+    )
+
+    dfSimulation["Erzeugung / Verbrauch [%]"] = (
+        dfSimulation["EE_Erzeugung [MWh]"]
+        / dfSimulation["Verbrauch [MWh]"]
+        * 100
+    )
+
+    dfSimulation["Direkte Deckung [%]"] = (
+        dfSimulation["Direkt genutzt [MWh]"]
+        / dfSimulation["Verbrauch [MWh]"]
+        * 100
+    )
+
+    dfSimulation["Restlast [GW]"] = (
+        dfSimulation["Verbrauch [MWh]"]
+        - dfSimulation["EE_Erzeugung [MWh]"]
+    ) / 250
+
+
 
     return dfSimulation
+
+#eventuell später auslagern nach BerechnungsFunktionen!
+def berechne_kennzahlen(dfSimulation):
+
+    jahreserzeugung = (
+        dfSimulation["EE_Erzeugung [MWh]"].sum()
+    )
+
+    jahresverbrauch = (
+        dfSimulation["Verbrauch [MWh]"].sum()
+    )
+
+    direkt_genutzt = (
+        dfSimulation["Direkt genutzt [MWh]"].sum()
+    )
+
+    jahresanteil = (
+        jahreserzeugung / jahresverbrauch * 100
+    )
+
+    direkter_deckungsgrad = (
+        direkt_genutzt / jahresverbrauch * 100
+    )
+
+    return {
+        "Jahreserzeugung [TWh]": jahreserzeugung / 1_000_000,
+        "Jahresverbrauch [TWh]": jahresverbrauch / 1_000_000,
+        "Jahresanteil [%]": jahresanteil,
+        "Direkter Deckungsgrad [%]": direkter_deckungsgrad
+    }
