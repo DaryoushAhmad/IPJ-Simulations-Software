@@ -1,8 +1,10 @@
 import pandas as pd
+import streamlit as st
 
+@st.cache_data  #caching funktion für streamlit
 def setUpGesamtcsv():
     dfGesamt = pd.read_csv(
-        "data/bereinigt/SMARD_Gesamt_Bereinigt.csv",
+        "../data/bereinigt/SMARD_Gesamt_Bereinigt.csv",
         sep=";",    
         decimal=",",    #Pandas erklären das es ein Dezimalzeichen ist
         thousands=".",   #Pandas erklären das es ein 1000 Zeichen
@@ -10,23 +12,40 @@ def setUpGesamtcsv():
     )
     dfGesamt["Datum von"] = pd.to_datetime(
     dfGesamt["Datum von"],
-    format="%Y-%m-%d %H:%M:%S"
+    format="%d.%m.%Y %H:%M"
     )
 
     dfGesamt["Datum bis"] = pd.to_datetime(
     dfGesamt["Datum bis"],
-    format="%Y-%m-%d %H:%M:%S"
+    format="%d.%m.%Y %H:%M"
     )   
+    
+    # geändert
+    dfGesamt["Datum von"] = pd.to_datetime(dfGesamt["Datum von"], format="%d.%m.%Y %H:%M", errors="coerce")   #die spalten in echte pandas datenobjekte umwandeln
+    dfGesamt["Datum bis"] = pd.to_datetime(dfGesamt["Datum bis"], format="%d.%m.%Y %H:%M", errors="coerce")
+    # end geändert
+    
+    #dataframe zurückgeben
     return dfGesamt
 
+@st.cache_data  #caching funktion für streamlit
 def setUpJahresStatistikcsv():
     dfJahresStatistik = pd.read_csv(
-        "data/bereinigt/SMARD_Jahresstatistik.csv",
+        "../data/bereinigt/SMARD_Jahresstatistik.csv",
         sep=";",    
         decimal=",",    #Pandas erklären das es ein Dezimalzeichen ist
         thousands=".",   #Pandas erklären das es ein 1000 Zeichen
         na_values=["-"]
     )
+
     return dfJahresStatistik
     
-
+def setUpErzeugerProfil():
+    dfErzeugerProfil = pd.read_csv(
+        "data/bereinigt/EE_Jahresprofil_2020-2025.csv",
+        sep=";",    
+        decimal=",",    #Pandas erklären das es ein Dezimalzeichen ist
+        thousands=".",   #Pandas erklären das es ein 1000 Zeichen
+        na_values=["-"]
+    )
+    return dfErzeugerProfil
