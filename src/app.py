@@ -22,6 +22,8 @@ from DataFunktionen import setUpGesamtcsv, setUpJahresStatistikcsv
 from BerechnungsFunktionen import erzeuge_ee_histogramm
 from BerechnungsFunktionen import erzeuge_kreisdiagram_spalten
 from BerechnungsFunktionen import erzeuge_zeitreihen_chart
+from Simulation import simuliere_ee, berechne_kennzahlen
+
 
 #grundeinstellungen festlegen
 st.set_page_config("Simulationssoftware","⚡" , "wide") #funtkioniert das?
@@ -107,74 +109,154 @@ elif(auswahl_nav=="Zeitreihen-Analyse"):
 
 
 
-#---------- tab3 ----------
+#---------- tab3 simulation ----------
 elif(auswahl_nav=="Szenario-Konfiguration"):
     #st.title("3. coming soon...")
     
-    #eingabe von infos des zu erstellenden szenario
+    #eingabe und infos des zu erstellenden szenario
     st.header("Szenario-Konfigurator")
     st.subheader("Szenario erstellen(noch nicht lauffähig)")
     
     szenario_name=st.text_input(
-        "Szenario-Name", value="(erforderlich)"
+        "Szenario-Name", value="z.b. ausbauziel 2030"
     )
     
-    #szenario_beschreibung=st.text_area(
-    #    "Szenario-Beschreibung", value="(erforderlich)"
-    #)
+    szenario_beschreibung = st.text_area(
+        "Szenario-Beschreibung", value="kurze beschreibung des szenarios..."
+        )
 
+    
 
-    #==================Für die Simulation==================
-    from Simulation import simuliere_ee
+    # erneuerbare energien und verbrauch, verbindung zu simulation.py von dary
+    st.subheader("Ausbau der erneuerbaren Energien & Verbrauch")
+
 
     faktor_pv = 1
     faktor_onshore = 1
     faktor_offshore = 1
-
-    szenario_beschreibung = st.text_area(
-    "Szenario-Beschreibung", value="(erforderlich)"
-    )
-
-    # Erneuerbare Energien
-    st.subheader("Ausbau der erneuerbaren Energien")
-
+   
     with st.form("simulation_form"):
+        col_links, col_rechts=st.columns(2)
 
-        faktor_pv = st.number_input(
-            "Photovoltaik-Faktor",
-            min_value=0.0,
-            value=1.0,
-            step=0.1
-        )
+        with col_links:
+            faktor_pv=st.number_input(
+                "Photovoltaik-Faktor",
+                min_value=0.0,
+                value=1.0,
+                step=0.1
+            )
 
-        faktor_onshore = st.number_input(
-            "Wind-Onshore-Faktor",
-            min_value=0.0,
-            value=1.0,
-            step=0.1
-        )
+            faktor_onshore=st.number_input(
+                "Wind-Onshore-Faktor",
+                min_value=0.0,
+                value=1.0,
+                step=0.1
+            )
 
-        faktor_offshore = st.number_input(
-            "Wind-Offshore-Faktor",
-            min_value=0.0,
-            value=1.0,
-            step=0.1
-        )
+            faktor_offshore=st.number_input(
+                "Wind-Offshore-Faktor",
+                min_value=0.0,
+                value=1.0,
+                step=0.1
+            )
 
-        simulation_starten = st.form_submit_button(
-            "Simulation starten"
-        )
+        with col_rechts:
+            faktor_biomasse=st.number_input(
+                "Biomasse-Faktor",
+                min_value=0.0,
+                value=1.0,
+                step=0.1
+            )
+
+            faktor_wasserkraft=st.number_input(
+                "Wasserkraft-Faktor",
+                min_value=0.0,
+                value=1.0,
+                step=0.1
+            )
+
+            faktor_verbrauch=st.number_input(
+                "Verbrauch-Faktor",
+                min_value=0.1,
+                value=1.0,
+                step=0.1
+            )
+
+            simulation_starten = st.form_submit_button(
+                        "Simulation starten"
+                    )
 
     if simulation_starten:
+    
+            ergebnis = simuliere_ee(
+                faktor_pv,
+                faktor_onshore,
+                faktor_offshore,
+                faktor_biomasse,
+                faktor_wasserkraft,
+                faktor_verbrauch,
+            )
+    
+            st.subheader("Simulationsergebnisse")
+            st.dataframe(ergebnis.head(12))
 
-        ergebnis = simuliere_ee(
-            faktor_pv,
-            faktor_onshore,
-            faktor_offshore
-        )
 
-        st.subheader("Simulationsergebnisse")
-        st.dataframe(ergebnis.head(12))
+
+
+
+
+
+
+
+    
+# #nachher löschen wenn schon gebaut--------------------------------------------
+#     with st.form("simulation_form"):
+
+#         faktor_pv = st.number_input(
+#             "Photovoltaik-Faktor",
+#             min_value=0.0,
+#             value=1.0,
+#             step=0.1
+#         )
+
+#         faktor_onshore = st.number_input(
+#             "Wind-Onshore-Faktor",
+#             min_value=0.0,
+#             value=1.0,
+#             step=0.1
+#         )
+
+#         faktor_offshore = st.number_input(
+#             "Wind-Offshore-Faktor",
+#             min_value=0.0,
+#             value=1.0,
+#             step=0.1
+#         )
+
+#         simulation_starten = st.form_submit_button(
+#             "Simulation starten"
+#         )
+
+#     if simulation_starten:
+
+#         ergebnis = simuliere_ee(
+#             faktor_pv,
+#             faktor_onshore,
+#             faktor_offshore
+#         )
+
+#         st.subheader("Simulationsergebnisse")
+#         st.dataframe(ergebnis.head(12))
+
+
+
+
+
+
+
+
+
+
 
     
     # #2 spalten erstellen für version und autor
@@ -297,7 +379,7 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
         
         
         
-#---------------------------für die Simulation----------------------------------
+#---------------------------für die simulation----------------------------------
 
         
   
