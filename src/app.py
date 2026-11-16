@@ -140,39 +140,43 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
 
         with col_links:
             faktor_pv=st.number_input(
-                "Photovolthaik-Faktor",
+                "Photovoltaik-Faktor",
                 min_value=0.0,
                 value=1.0,
                 step=0.1
             )
 
             faktor_onshore=st.number_input(
-                "Wind-Onshore_Faktor",
+                "Wind-Onshore-Faktor",
                 min_value=0.0,
                 value=1.0,
                 step=0.1
             )
 
             faktor_offshore=st.number_input(
+                "Wind-Offshore-Faktor",
                 min_value=0.0,
-                vlaue=1.0,
+                value=1.0,
                 step=0.1
             )
 
         with col_rechts:
             faktor_biomasse=st.number_input(
+                "Biomasse-Faktor",
                 min_value=0.0,
                 value=1.0,
                 step=0.1
             )
 
             faktor_wasserkraft=st.number_input(
+                "Wasserkraft-Faktor",
                 min_value=0.0,
                 value=1.0,
                 step=0.1
             )
 
             faktor_verbrauch=st.number_input(
+                "Verbrauch-Faktor",
                 min_value=0.1,
                 value=1.0,
                 step=0.1
