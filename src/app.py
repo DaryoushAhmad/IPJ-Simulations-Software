@@ -176,11 +176,17 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
                 step=0.1
             )
 
-            faktor_verbrauch=st.number_input(
-                "Verbrauch-Faktor",
+            verbrauchsReferenzJahr=st.number_input(
+                "Referenz Jahr Verbrauch",
+                min_value=2020,
+                value=2020,
+                step=1
+            )
+            gesamtVerbrauchIn_TWh=st.number_input(
+                "Gesamtverbrauch in [TWh]",
                 min_value=0.1,
-                value=1.0,
-                step=0.1
+                value=500.0,
+                step=1.0
             )
 
             simulation_starten = st.form_submit_button(
@@ -195,7 +201,8 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
                 faktor_offshore,
                 faktor_biomasse,
                 faktor_wasserkraft,
-                faktor_verbrauch,
+                verbrauchsReferenzJahr,
+                gesamtVerbrauchIn_TWh
             )
 
             st.subheader("Simulationsergebnisse")
