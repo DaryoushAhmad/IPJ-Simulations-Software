@@ -19,9 +19,10 @@
 import streamlit as st
 import pandas as pd
 from DataFunktionen import setUpGesamtcsv, setUpJahresStatistikcsv
-from BerechnungsFunktionen import erzeuge_ee_histogramm
+from BerechnungsFunktionen import erzeuge_ee_histogramm, erzeugung_verbrauch_vergleich, produktionsmenge_vergleich, verhaeltnis_erzeugung_verbrauch
 from BerechnungsFunktionen import erzeuge_kreisdiagram_spalten
 from BerechnungsFunktionen import erzeuge_zeitreihen_chart
+from BerechnungsFunktionen import simuliere_ee_erzeugung
 from Simulation import simuliere_ee, berechne_kennzahlen
 
 
@@ -38,7 +39,7 @@ dfJahres=setUpJahresStatistikcsv()
 
 
 #auswahlmenü
-auswahl_nav=st.sidebar.radio("Navigation", ["Dashboard", "Zeitreihen-Analyse", "Szenario-Konfiguration", "erklärungen"])
+auswahl_nav=st.sidebar.radio("Navigation", ["Dashboard", "Zeitreihen-Analyse", "Szenario-Konfiguration", "Simulationsdiagramme", "erklärungen"])
 
 #---------- dashboard ----------
 if(auswahl_nav=="Dashboard"):
@@ -61,11 +62,11 @@ if(auswahl_nav=="Dashboard"):
     
     #diagramm häufigkeitsverteilung des ee anteils einbauen
     fig_histogramm=erzeuge_ee_histogramm(dfGesamt)
-    st.plotly_chart(fig_histogramm, use_container_width=True)
+    st.plotly_chart(fig_histogramm, width='stretch')
     
     #kreisdiagramm einbauen
     fig_kreisdiagramm=erzeuge_kreisdiagram_spalten(dfGesamt)
-    st.plotly_chart(fig_kreisdiagramm, use_container_width=True)
+    st.plotly_chart(fig_kreisdiagramm, width='stretch')
     
     
     
@@ -97,7 +98,7 @@ elif(auswahl_nav=="Zeitreihen-Analyse"):
         df_gefiltert_datum=dfGesamt
 
     fig_zeitreihe=erzeuge_zeitreihen_chart(df_gefiltert_datum)
-    st.plotly_chart(fig_zeitreihe, use_container_width=True)
+    st.plotly_chart(fig_zeitreihe, width='stretch')
 
 
 
@@ -187,7 +188,7 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
                     )
 
     if simulation_starten:
-    
+            #wenn gedrückt, dann simuliere mit ausgewählten Faktoren
             ergebnis = simuliere_ee(
                 faktor_pv,
                 faktor_onshore,
@@ -196,9 +197,51 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
                 faktor_wasserkraft,
                 faktor_verbrauch,
             )
-    
+
             st.subheader("Simulationsergebnisse")
-            st.dataframe(ergebnis.head(12))
+            st.dataframe(ergebnis.head(12)) #Daten Aus Simulation werden in einer Tabelle der größe 12 dargestellt
+            #Zwischenspeichern der Simulation zum späteren Plotten der Ergebnisse
+            st.session_state["df_simulation"]=ergebnis
+
+
+#--------Tab 4 Diagramme--------
+#Marios
+
+elif(auswahl_nav=="Simulationsdiagramme"):
+    st.header("Simulationsergebnisse")
+    if "df_simulation" in st.session_state:
+        df_simulation = st.session_state["df_simulation"]
+        #st.write(df_simulation.columns)
+        #st.write(len(df_simulation))
+
+        #hier ausgabe der Erzeugungen Wind,PV, Wasser usw.z.Zt als Line. wird noch geändert
+        fig=simuliere_ee_erzeugung(df_simulation)
+        st.title="Simulation der Erzeugungen in MWh"
+        st.plotly_chart(fig, width='stretch')
+
+        #hier Ausgabe Erzeugung, Verbrauch und Bilanz. z.Zt als bar. später als Überlagerung
+        fig=erzeugung_verbrauch_vergleich(df_simulation)
+        st.title="Simulation und Vergleich von Erzeugung und Verbrauch"
+        st.plotly_chart(fig,width='stretch')
+
+        #hier Ausgabe von Überschuss und Fehlmenge und Restlast
+        fig=produktionsmenge_vergleich(df_simulation)
+        st.title="Übersicht Überschuss, Fehlmenge und Restlast"
+        st.plotly_chart(fig,width='stretch')
+
+
+        #Erzeugung/Verbrauch alleine als line
+        fig=verhaeltnis_erzeugung_verbrauch(df_simulation)
+        st.title="Übersicht Überschuss, Fehlmenge und Restlast"
+        st.plotly_chart(fig,width='stretch')
+
+
+    else:
+        st.warning("Erst Simulation durchführen")
+    
+
+    
+
 
 
 

@@ -1,6 +1,8 @@
 import pandas as pd
 import plotly.express as px
-from DataFunktionen import setUpGesamtcsv, setUpJahresStatistikcsv
+#go ist zum Testen da
+import plotly.graph_objects as go
+from DataFunktionen import setUpGesamtcsv, setUpJahresStatistikcsv, setUpErzeugerProfil
 import plotly.express as px
 
 
@@ -157,3 +159,103 @@ def erzeuge_zeitreihen_chart(df_eingabe):
     
     
     return fig
+
+#Simulation (Marios)
+#Zunächst in V1 line plots.  Ich habe vor da nachzubessern. Gerne Feedback!
+#Es könnte auch sein, dass ich so eine zeitauflösungsstufe mache wie in Tab 2 von Kai. es sind sonst einfach echt Viele Werte auf einmal
+def simuliere_ee_erzeugung(df):
+    
+    fig=px.line(
+        df,
+        x="Viertelstunde (Beginn)",
+        y=["PV [MWh]",
+           "Wind Onshore [MWh]",
+           "Wind Offshore [MWh]",
+           "Biomasse [MWh]",
+           "Wasserkraft [MWh]"]
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=df["Viertelstunde (Beginn)"],
+            y=df["EE_Erzeugung [MWh]"],
+            mode='lines',
+            name="Gesamterzeugung",
+            line=dict(color="red", width=1)
+        )
+    )
+
+    for trace in fig.data:
+            trace.opacity=0.5
+
+    fig.update_layout(
+        hovermode="x unified",
+        title="Simulation Erzeugungen EE",
+        xaxis_title="Datum",
+        yaxis_title="Erzeugung [MWh]"
+    )
+
+    return fig
+
+#Vergleich zwischen Erzeugung, Verbrauch und Bilanz. kann man gestapelt darstellen oder so
+def erzeugung_verbrauch_vergleich(df):
+
+    fig=px.line(
+        df,
+        x="Viertelstunde (Beginn)",
+        y=["EE_Erzeugung [MWh]", "Verbrauch [MWh]", "Bilanz [MWh]"]
+    )
+    for trace in fig.data:
+            trace.opacity=0.5
+
+    fig.update_layout(
+        hovermode="x unified",
+        title="Vergleich Erzeugung und Verbrauch",
+        xaxis_title="Datum",
+        yaxis_title="Energie in MWh"
+
+    )
+
+    return fig
+
+#Hier muss restlast noch in seine Eigene Y-Achse gepackt werden, da keine Energie sondern eine Leistung
+def produktionsmenge_vergleich(df):
+    fig=px.line(
+            df,
+            x="Viertelstunde (Beginn)",
+            y=["Ueberschuss [MWh]", "Fehlmenge [MWh]"],
+            color_discrete_map={
+                 "Ueberschuss [MWh]": "green"
+            }
+    )
+    for trace in fig.data:
+        trace.opacity=0.5
+
+    fig.update_layout(
+        hovermode="x unified",
+        title="Produktionsmengenvergleich",
+        xaxis_title="Datum",
+        yaxis_title="Energie in MWh"
+    
+        )
+    
+    return fig
+
+def verhaeltnis_erzeugung_verbrauch(df):
+    fig=px.line(
+            df,
+            x="Viertelstunde (Beginn)",
+            y=["Erzeugung / Verbrauch [%]"],
+        )
+    fig.update_layout(
+        hovermode="x unified",
+        title="Verhältnis zwischen Erzeugung und Verbrauch",
+        xaxis_title="Datum",
+        yaxis_title="Anteil in Prozent"     
+    
+        )
+    return fig
+
+
+
+
