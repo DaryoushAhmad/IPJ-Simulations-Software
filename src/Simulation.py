@@ -1,5 +1,7 @@
 from DataFunktionen import setUpErzeugerProfil
 
+#app starten: python -m streamlit run src/app.py
+
 #Installierte Leistungen [GW]
 PV_Installiert = 118.111
 windOnShore_Installiert = 68.179
@@ -8,7 +10,7 @@ biomasse_Installiert = 0
 wasserkraft_Installiert = 0
 
 
-def simuliere_ee(faktor_pv, faktor_onshore, faktor_offshore, faktor_biomasse, faktor_wasserkraft, faktor_verbrauch=1.0):
+def simuliere_ee(leistung_pv, leistung_onshore, leistung_offshore, leistung_biomasse, leistung_wasserkraft,verbrauchsReferenzJahr="2025" ,gesamtVerbrauchIn_TWh=600 ):
     
 
     # Erzeugerprofil einlesen
@@ -21,7 +23,7 @@ def simuliere_ee(faktor_pv, faktor_onshore, faktor_offshore, faktor_biomasse, fa
     dfSimulation["PV [MWh]"] = (
         dfProfil["PV"]
         * PV_Installiert
-        * faktor_pv
+        * leistung_pv
         * 2.5
     )
 
@@ -29,14 +31,14 @@ def simuliere_ee(faktor_pv, faktor_onshore, faktor_offshore, faktor_biomasse, fa
     dfSimulation["Wind Onshore [MWh]"] = (
         dfProfil["Wind Onshore"]
         * windOnShore_Installiert
-        * faktor_onshore
-        * 2.5
+        * leistung_onshore
+        * 2.5   #1000 * 0.25 / 100 = 2.5
     )
     # Wind Offshore Simulieren
     dfSimulation["Wind Offshore [MWh]"] = (
         dfProfil["Wind Offshore"]
         * windOffShore_Installiert
-        * faktor_offshore
+        * leistung_offshore
         * 2.5
     )
 
@@ -44,7 +46,7 @@ def simuliere_ee(faktor_pv, faktor_onshore, faktor_offshore, faktor_biomasse, fa
     dfSimulation["Biomasse [MWh]"] = (
         dfProfil["Biomasse"]
         * biomasse_Installiert
-        * faktor_biomasse
+        * leistung_biomasse
         * 2.5
     )
 
@@ -52,14 +54,14 @@ def simuliere_ee(faktor_pv, faktor_onshore, faktor_offshore, faktor_biomasse, fa
     dfSimulation["Wasserkraft [MWh]"] = (
         dfProfil["Wasserkraft"]
         * wasserkraft_Installiert
-        * faktor_wasserkraft
+        * leistung_wasserkraft
         * 2.5
     )
 
     # Verbrauch "Simulieren"
     dfSimulation["Verbrauch [MWh]"] = (
-        dfProfil["Verbrauch 2025 [MWh]"]
-        * faktor_verbrauch
+        dfProfil[f"Verbrauch {verbrauchsReferenzJahr}"] / 100
+        * gesamtVerbrauchIn_TWh * 1000000
     )
 
     
