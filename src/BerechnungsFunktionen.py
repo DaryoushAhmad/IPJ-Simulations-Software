@@ -91,6 +91,12 @@ def erzeuge_ee_histogramm(df_eingabe):
                       annotation_font=dict(color="white", size=14), #geändert
                       )
     
+    #5% balkenraster sauber ab 0 ausrichten, erste intervalle 0 bis 10 frei lassen
+    fig.update_traces(xbins=dict(start=0.0, size=5.0))
+    
+    #range zwingt x achse, bei 0 bis 155 zu zeigen
+    fig.update_xaxes(range=[0, 155], dtick=10)
+    
     return fig
 
 
