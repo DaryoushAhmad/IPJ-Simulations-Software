@@ -116,14 +116,15 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
     
     #eingabe und infos des zu erstellenden szenario
     st.header("Szenario-Konfigurator")
-    st.subheader("Szenario erstellen(noch nicht lauffähig)")
-    
+    #st.subheader("Szenario erstellen(noch nicht lauffähig)")
+    st.header("Szenario-Konfigurator")
+
     szenario_name=st.text_input(
-        "Szenario-Name", value="z.b. ausbauziel 2030"
+        "Szenario-Name", placeholder="z.b. ausbauziel 2030"
     )
     
     szenario_beschreibung = st.text_area(
-        "Szenario-Beschreibung", value="kurze beschreibung des szenarios..."
+        "Szenario-Beschreibung", placeholder="kurze beschreibung des szenarios..."
         )
 
     
@@ -132,30 +133,30 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
     st.subheader("Ausbau der erneuerbaren Energien & Verbrauch")
 
 
-    faktor_pv = 1
-    faktor_onshore = 1
-    faktor_offshore = 1
+    #faktor_pv = 1
+    #faktor_onshore = 1
+    #faktor_offshore = 1
    
     with st.form("simulation_form"):
         col_links, col_rechts=st.columns(2)
 
         with col_links:
             faktor_pv=st.number_input(
-                "Photovoltaik-Faktor",
+                "Photovoltaik-Leistung",
                 min_value=0.0,
                 value=1.0,
                 step=0.1
             )
 
             faktor_onshore=st.number_input(
-                "Wind-Onshore-Faktor",
+                "Wind-Onshore-Leistung",
                 min_value=0.0,
                 value=1.0,
                 step=0.1
             )
 
             faktor_offshore=st.number_input(
-                "Wind-Offshore-Faktor",
+                "Wind-Offshore-Leistung",
                 min_value=0.0,
                 value=1.0,
                 step=0.1
@@ -163,46 +164,45 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
 
         with col_rechts:
             faktor_biomasse=st.number_input(
-                "Biomasse-Faktor",
+                "Biomasse-Leistung",
                 min_value=0.0,
                 value=1.0,
                 step=0.1
             )
 
             faktor_wasserkraft=st.number_input(
-                "Wasserkraft-Faktor",
+                "Wasserkraft-Leistung",
                 min_value=0.0,
                 value=1.0,
                 step=0.1
             )
 
-            verbrauchsReferenzJahr=st.number_input(
+            verbrauchsReferenzJahr=st.selectbox(
                 "Referenz Jahr Verbrauch",
-                min_value=2020,
-                value=2020,
-                step=1
+                options=["2020","2021","2022","2023","2024","2025",],
+                index=5,
             )
             gesamtVerbrauchIn_TWh=st.number_input(
                 "Gesamtverbrauch in [TWh]",
                 min_value=0.1,
-                value=500.0,
-                step=1.0
+                value=600.0,
+                step=10.0
             )
 
-            simulation_starten = st.form_submit_button(
-                        "Simulation starten"
-                    )
+        simulation_starten = st.form_submit_button(
+                    "Simulation starten"
+                )
 
     if simulation_starten:
             #wenn gedrückt, dann simuliere mit ausgewählten Faktoren
             ergebnis = simuliere_ee(
-                faktor_pv,
-                faktor_onshore,
-                faktor_offshore,
-                faktor_biomasse,
-                faktor_wasserkraft,
-                verbrauchsReferenzJahr,
-                gesamtVerbrauchIn_TWh
+                leistung_pv=faktor_pv,
+                leistung_onshore=faktor_onshore,
+                leistung_offshore=faktor_offshore,
+                leistung_biomasse=faktor_biomasse,
+                leistung_wasserkraft=faktor_wasserkraft,
+                verbrauchsReferenzJahr=verbrauchsReferenzJahr,
+                gesamtVerbrauchIn_TWh=gesamtVerbrauchIn_TWh
             )
 
             st.subheader("Simulationsergebnisse")
@@ -213,6 +213,7 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
 
 #--------Tab 4 Diagramme--------
 #Marios
+#bearbeitet von kai, st.titel=... gibts nicht! Nutze lieber st.suberheader("text")
 
 elif(auswahl_nav=="Simulationsdiagramme"):
     st.header("Simulationsergebnisse")
@@ -223,23 +224,23 @@ elif(auswahl_nav=="Simulationsdiagramme"):
 
         #hier ausgabe der Erzeugungen Wind,PV, Wasser usw.z.Zt als Line. wird noch geändert
         fig=simuliere_ee_erzeugung(df_simulation)
-        st.title="Simulation der Erzeugungen in MWh"
+        st.subheader("Simulation der Erzeugungen in MWh")
         st.plotly_chart(fig, width='stretch')
 
         #hier Ausgabe Erzeugung, Verbrauch und Bilanz. z.Zt als bar. später als Überlagerung
         fig=erzeugung_verbrauch_vergleich(df_simulation)
-        st.title="Simulation und Vergleich von Erzeugung und Verbrauch"
+        st.subheader("Simulation und Vergleich von Erzeugung und Verbrauch")
         st.plotly_chart(fig,width='stretch')
 
         #hier Ausgabe von Überschuss und Fehlmenge und Restlast
         fig=produktionsmenge_vergleich(df_simulation)
-        st.title="Übersicht Überschuss, Fehlmenge und Restlast"
+        st.subheader("Übersicht Überschuss, Fehlmenge und Restlast")
         st.plotly_chart(fig,width='stretch')
 
 
         #Erzeugung/Verbrauch alleine als line
         fig=verhaeltnis_erzeugung_verbrauch(df_simulation)
-        st.title="Übersicht Überschuss, Fehlmenge und Restlast"
+        st.subheader("Übersicht Überschuss, Fehlmenge und Restlast")
         st.plotly_chart(fig,width='stretch')
 
 
