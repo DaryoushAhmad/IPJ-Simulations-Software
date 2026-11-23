@@ -23,6 +23,7 @@ from BerechnungsFunktionen import erzeuge_ee_histogramm, erzeugung_verbrauch_ver
 from BerechnungsFunktionen import erzeuge_kreisdiagram_spalten
 from BerechnungsFunktionen import erzeuge_zeitreihen_chart
 from BerechnungsFunktionen import simuliere_ee_erzeugung
+from BerechnungsFunktionen import dunkelflauten_graph
 from Simulation import simuliere_ee, berechne_kennzahlen
 
 
@@ -206,7 +207,7 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
             )
 
             st.subheader("Simulationsergebnisse")
-            st.dataframe(ergebnis.head(12)) #Daten Aus Simulation werden in einer Tabelle der größe 12 dargestellt
+            st.dataframe(ergebnis.head(1000)) #Daten Aus Simulation werden in einer Tabelle der größe 12 dargestellt
             #Zwischenspeichern der Simulation zum späteren Plotten der Ergebnisse
             st.session_state["df_simulation"]=ergebnis
 
@@ -221,6 +222,17 @@ elif(auswahl_nav=="Simulationsdiagramme"):
         df_simulation = st.session_state["df_simulation"]
         #st.write(df_simulation.columns)
         #st.write(len(df_simulation))
+        #========================================von dary===================================================
+
+        st.subheader("Dunkelflauten und PV-/Wind-Erzeugung")
+        st.caption(
+            "Rot markierte Viertelstunden zeigen eine Dunkelflaute (Ja). "
+            "PV + Wind enthält die Anpassung durch die Dunkelflautensimulation. "
+            "Zum Vergrößern einen Zeitraum im Diagramm aufziehen; "
+            "ein Doppelklick setzt den Zoom zurück."
+        )
+        st.plotly_chart(dunkelflauten_graph(df_simulation), width='stretch')
+        #===========================================================================================
 
         #hier ausgabe der Erzeugungen Wind,PV, Wasser usw.z.Zt als Line. wird noch geändert
         fig=simuliere_ee_erzeugung(df_simulation)

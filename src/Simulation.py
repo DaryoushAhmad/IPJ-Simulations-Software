@@ -1,4 +1,5 @@
 from DataFunktionen import setUpErzeugerProfil
+from DunkelflautenSimulation import simuliereDunkelflauten
 
 #app starten: python -m streamlit run src/app.py
 
@@ -10,7 +11,7 @@ biomasse_Installiert = 0
 wasserkraft_Installiert = 0
 
 
-def simuliere_ee(leistung_pv, leistung_onshore, leistung_offshore, leistung_biomasse, leistung_wasserkraft,verbrauchsReferenzJahr="2025" ,gesamtVerbrauchIn_TWh=600 ):
+def simuliere_ee(leistung_pv, leistung_onshore, leistung_offshore, leistung_biomasse, leistung_wasserkraft,verbrauchsReferenzJahr ,gesamtVerbrauchIn_TWh ):
     
 
     # Erzeugerprofil einlesen
@@ -64,12 +65,45 @@ def simuliere_ee(leistung_pv, leistung_onshore, leistung_offshore, leistung_biom
         * gesamtVerbrauchIn_TWh * 1000000
     )
 
+
+    # Gesamte installierte Wind- und PV-Leistung [GW]
+    installierteLeistungWindPV = (
+        PV_Installiert * leistung_pv
+        + windOnShore_Installiert * leistung_onshore
+        + windOffShore_Installiert * leistung_offshore
+    )
+
+        # Wind und PV zusammenfassen
+    dfSimulation["Wind + PV [MWh]"] = (
+        dfSimulation["PV [MWh]"]
+        + dfSimulation["Wind Onshore [MWh]"]
+        + dfSimulation["Wind Offshore [MWh]"]
+    ).astype(float)
+
+    dfSimulation["Anteil PV"] = (
+        dfSimulation["PV [MWh]"] / dfSimulation["Wind + PV [MWh]"]
+    )
+
+    dfSimulation["Anteil Wind Onshore"] = (
+        dfSimulation["Wind Onshore [MWh]"] / dfSimulation["Wind + PV [MWh]"]
+    )
+
+    dfSimulation["Anteil Wind Offshore"] = (
+        dfSimulation["Wind Offshore [MWh]"] / dfSimulation["Wind + PV [MWh]"]
+    )
+
+
+    # Dunkelflauten simulieren
+    dfSimulation = simuliereDunkelflauten(
+        dfSimulation,
+        installierteLeistungWindPV,
+        maxAenderung=1.0,
+        seed=None
+    )
     
     # EE Erzeugung berechnen
     dfSimulation["EE_Erzeugung [MWh]"] = (
-        dfSimulation["PV [MWh]"] 
-        + dfSimulation["Wind Onshore [MWh]"]
-        + dfSimulation["Wind Offshore [MWh]"]
+        dfSimulation["Wind + PV [MWh]"]
         + dfSimulation["Biomasse [MWh]"]
         + dfSimulation["Wasserkraft [MWh]"]
     )
@@ -114,7 +148,25 @@ def simuliere_ee(leistung_pv, leistung_onshore, leistung_offshore, leistung_biom
         - dfSimulation["EE_Erzeugung [MWh]"]
     ) / 250
 
+    anzahlDunkelflautenViertelstunden = (
+        dfSimulation["Dunkelflaute"] == 0
+    ).sum()
 
+    anteilDunkelflauten = (
+        anzahlDunkelflautenViertelstunden
+        / len(dfSimulation)
+        * 100
+    )
+
+    print("Viertelstunden mit Dunkelflaute:", anzahlDunkelflautenViertelstunden)
+    print("Anteil Dunkelflauten [%]:", anteilDunkelflauten)
+
+    anzahlDunkelflauten = (
+        (dfSimulation["Dunkelflaute"] == 0)
+        & (dfSimulation["Dunkelflaute"].shift(1) != 0)
+    ).sum()
+
+    print("Anzahl Dunkelflauten:", anzahlDunkelflauten)
 
     return dfSimulation
 
