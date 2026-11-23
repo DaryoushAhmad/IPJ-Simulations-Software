@@ -7,6 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATA_PATH_START = BASE_DIR / "data" / "bereinigt" / "dunkelflauten_start.csv"
 DATA_PATH_DAUER = BASE_DIR / "data" / "bereinigt" / "dunkelflauten_dauer.csv"
+DATA_PATH_P_WEITER = BASE_DIR / "data" / "bereinigt" / "dunkelflauten_p_weiter.csv"
 
 
 # ---------- Wahrscheinlichkeitsdaten einlesen ----------
@@ -14,7 +15,13 @@ DATA_PATH_DAUER = BASE_DIR / "data" / "bereinigt" / "dunkelflauten_dauer.csv"
 def ladeWahrscheinlichkeitsDaten():
 
     df_P_Start = pd.read_csv(DATA_PATH_START)
-    df_P_Weiter = pd.read_csv(DATA_PATH_DAUER)
+    df_P_Weiter = pd.read_csv(
+        DATA_PATH_P_WEITER,
+        sep=";",
+        decimal=",",
+        encoding="utf-8-sig",
+        float_precision="round_trip"
+    )
 
     return df_P_Start, df_P_Weiter
 
@@ -22,6 +29,7 @@ def ladeWahrscheinlichkeitsDaten():
 # ---------- P_Weiter berechnen ----------
 
 def berechnePWeiter(df_P_Weiter):
+    """Berechnet die Exporttabelle aus den Häufigkeiten in dunkelflauten_dauer.csv."""
 
     ergebnisse = []
 
@@ -83,6 +91,7 @@ def berechneDunkelflautenStatus(dfErzeugung, dfPStart, dfPWeiter, zufallsGenerat
     # Listen für die Ergebnisse
     dunkelflautenStatus = []
     wahrscheinlichkeiten = []
+    zufallsZahlen = []
 
     # Anfangszustand
     dunkelflauteAktiv = False
@@ -147,10 +156,12 @@ def berechneDunkelflautenStatus(dfErzeugung, dfPStart, dfPWeiter, zufallsGenerat
         # Ergebnisse speichern
         dunkelflautenStatus.append(status)
         wahrscheinlichkeiten.append(wahrscheinlichkeit)
+        zufallsZahlen.append(zufallsZahl)
 
     # Neue Spalten erstellen
     dfErzeugung["Dunkelflaute"] = dunkelflautenStatus
     dfErzeugung["Verwendete Wahrscheinlichkeit"] = wahrscheinlichkeiten
+    dfErzeugung["Zufällige Zahl"] = zufallsZahlen
 
     return dfErzeugung
 
@@ -269,9 +280,6 @@ def simuliereDunkelflauten(
 
     # Wahrscheinlichkeitsdaten einlesen
     dfPStart, dfPWeiter = ladeWahrscheinlichkeitsDaten()
-
-    # Fortsetzungswahrscheinlichkeiten berechnen
-    dfPWeiter = berechnePWeiter(dfPWeiter)
 
     # Dunkelflautenstatus für alle Viertelstunden bestimmen
     dfErzeugung = berechneDunkelflautenStatus(
