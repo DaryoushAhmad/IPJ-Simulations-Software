@@ -28,50 +28,50 @@ def ladeWahrscheinlichkeitsDaten():
 
 # ---------- P_Weiter berechnen ----------
 
-def berechnePWeiter(df_P_Weiter):
-    """Berechnet die Exporttabelle aus den Häufigkeiten in dunkelflauten_dauer.csv."""
+# def berechnePWeiter(df_P_Weiter):
+#     """Berechnet die Exporttabelle aus den Häufigkeiten in dunkelflauten_dauer.csv."""
 
-    ergebnisse = []
+#     ergebnisse = []
 
-    for monat in range(1, 13):
+#     for monat in range(1, 13):
 
-        # Nur Ereignisse des aktuellen Monats auswählen
-        dfMonat = df_P_Weiter[
-            df_P_Weiter["monat"] == monat
-        ]
+#         # Nur Ereignisse des aktuellen Monats auswählen
+#         dfMonat = df_P_Weiter[
+#             df_P_Weiter["monat"] == monat
+#         ]
 
-        # Maximale Dauer bestimmen
-        maxDauer = int(dfMonat["dauer_viertelstunden"].max())
+#         # Maximale Dauer bestimmen
+#         maxDauer = int(dfMonat["dauer_viertelstunden"].max())
 
-        for dauer in range(1, maxDauer + 1):
+#         for dauer in range(1, maxDauer + 1):
 
-            # Ereignisse, die länger als 'dauer' gedauert haben
-            dfLaenger = dfMonat[
-                dfMonat["dauer_viertelstunden"] > dauer
-            ]
-            anzahlLaenger = dfLaenger["anzahl"].sum()
+#             # Ereignisse, die länger als 'dauer' gedauert haben
+#             dfLaenger = dfMonat[
+#                 dfMonat["dauer_viertelstunden"] > dauer
+#             ]
+#             anzahlLaenger = dfLaenger["anzahl"].sum()
 
-            # Ereignisse, die mindestens 'dauer' gedauert haben
-            dfMinLaenger = dfMonat[
-                dfMonat["dauer_viertelstunden"] >= dauer
-            ]
-            anzahlminLaenger = dfMinLaenger["anzahl"].sum()
+#             # Ereignisse, die mindestens 'dauer' gedauert haben
+#             dfMinLaenger = dfMonat[
+#                 dfMonat["dauer_viertelstunden"] >= dauer
+#             ]
+#             anzahlminLaenger = dfMinLaenger["anzahl"].sum()
 
-            # Wahrscheinlichkeit berechnen
-            if anzahlminLaenger > 0:
-                wahrscheinlichkeit = anzahlLaenger / anzahlminLaenger
-            else:
-                wahrscheinlichkeit = 0
+#             # Wahrscheinlichkeit berechnen
+#             if anzahlminLaenger > 0:
+#                 wahrscheinlichkeit = anzahlLaenger / anzahlminLaenger
+#             else:
+#                 wahrscheinlichkeit = 0
 
-            ergebnisse.append({
-                "monat": monat,
-                "dauer_viertelstunden": dauer,
-                "p_weiter": wahrscheinlichkeit
-            })
+#             ergebnisse.append({
+#                 "monat": monat,
+#                 "dauer_viertelstunden": dauer,
+#                 "p_weiter": wahrscheinlichkeit
+#             })
 
-    dfErgebnis = pd.DataFrame(ergebnisse)
+#     dfErgebnis = pd.DataFrame(ergebnisse)
 
-    return dfErgebnis
+#     return dfErgebnis
 
 
 # ---------- Dunkelflautenstatus berechnen ----------
