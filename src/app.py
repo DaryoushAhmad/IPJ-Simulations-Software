@@ -23,6 +23,7 @@ from BerechnungsFunktionen import erzeuge_ee_histogramm, erzeugung_verbrauch_ver
 from BerechnungsFunktionen import erzeuge_kreisdiagram_spalten
 from BerechnungsFunktionen import erzeuge_zeitreihen_chart
 from BerechnungsFunktionen import simuliere_ee_erzeugung
+from BerechnungsFunktionen import dunkelflauten_graph
 from Simulation import simuliere_ee, berechne_kennzahlen
 
 
@@ -128,21 +129,25 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
             st.subheader("Erzeugung")
             col_links, col_rechts=st.columns(2)
             
+<<<<<<< HEAD
             faktor_pv=st.number_input(
+=======
+            leistung_pv=st.number_input(
+>>>>>>> 5c520fd6800e05e4b11b616a8b9a7151e5ba5785
                 "Photovoltaik-Leistung [GW]",
                 min_value=0.0,
                 value=147.0,
                 step=10.0
             )
 
-            faktor_onshore=st.number_input(
+            leistung_onshore=st.number_input(
                 "Wind-Onshore-Leistung [GW]",
                 min_value=0.0,
                 value=80.0,
                 step=10.0
             )
 
-            faktor_offshore=st.number_input(
+            leistung_offshore=st.number_input(
                 "Wind-Offshore-Leistung [GW]",
                 min_value=0.0,
                 value=20.0,
@@ -150,7 +155,7 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
             )
 
         with col_rechts:
-            faktor_biomasse=st.number_input(
+            leistung_biomasse=st.number_input(
                 "Biomasse-Leistung [GW]",
                 min_value=0.0,
                 value=7.0,
@@ -158,52 +163,52 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
             )
 
             #nachträglich einfügen
-            faktor_wasserkraft=st.number_input(
+            leistung_wasserkraft=st.number_input(
                 "Wasserkraft-Leistung [GW]",
                 min_value=0.0,
                 value=1.0,
                 step=1.0
             )
             
-    #---------- box verbrauch ----------
-    with st.container(border=True):
-        st.subheader("Verbrauch")
-        col_links, col_rechts=st.columns(2)
+        #---------- box verbrauch ----------
+        with st.container(border=True):
+            st.subheader("Verbrauch")
+            col_links, col_rechts=st.columns(2)
         
-        with col_links:
-            verbrauchsReferenzJahr=st.selectbox(
-                            "Referenz Jahr Verbrauch",
-                            options=["2020","2021","2022","2023","2024","2025",],
-                            index=5,
-                        )
+            with col_links:
+                verbrauchsReferenzJahr=st.selectbox(
+                                "Referenz Jahr Verbrauch",
+                                options=["2020","2021","2022","2023","2024","2025",],
+                                index=5,
+                            )
             
-        with col_rechts:
-            gesamtVerbrauchIn_TWh=st.number_input(
-                            "Gesamtverbrauch in [TWh]",
-                            min_value=0.1,
-                            value=530.0,
-                            step=10.0
-                        )
+            with col_rechts:
+                gesamtVerbrauchIn_TWh=st.number_input(
+                                "Gesamtverbrauch in [TWh]",
+                                min_value=0.1,
+                                value=530.0,
+                                step=10.0
+                            )
             
             
-        simulation_starten = st.form_submit_button(
-                    "Simulation starten"
-                )
+            simulation_starten = st.form_submit_button(
+                        "Simulation starten"
+                    )
 
     if simulation_starten:
-            #wenn gedrückt, dann simuliere mit ausgewählten Faktoren
+            #wenn gedrückt, dann simuliere mit eingegebenen Leistungen in GW
             ergebnis = simuliere_ee(
-                leistung_pv=faktor_pv,
-                leistung_onshore=faktor_onshore,
-                leistung_offshore=faktor_offshore,
-                leistung_biomasse=faktor_biomasse,
-                leistung_wasserkraft=faktor_wasserkraft,
+                leistung_pv=leistung_pv,
+                leistung_onshore=leistung_onshore,
+                leistung_offshore=leistung_offshore,
+                leistung_biomasse=leistung_biomasse,
+                leistung_wasserkraft=leistung_wasserkraft,
                 verbrauchsReferenzJahr=verbrauchsReferenzJahr,
                 gesamtVerbrauchIn_TWh=gesamtVerbrauchIn_TWh
             )
 
             st.subheader("Simulationsergebnisse")
-            st.dataframe(ergebnis.head(12)) #Daten Aus Simulation werden in einer Tabelle der größe 12 dargestellt
+            st.dataframe(ergebnis.head(1000)) #Daten Aus Simulation werden in einer Tabelle der größe 12 dargestellt
             #Zwischenspeichern der Simulation zum späteren Plotten der Ergebnisse
             st.session_state["df_simulation"]=ergebnis          
             
@@ -236,6 +241,17 @@ elif(auswahl_nav=="Simulationsdiagramme"):
         df_simulation = st.session_state["df_simulation"]
         #st.write(df_simulation.columns)
         #st.write(len(df_simulation))
+        #========================================von dary===================================================
+
+        st.subheader("Dunkelflauten und PV-/Wind-Erzeugung")
+        st.caption(
+            "Rot markierte Viertelstunden zeigen eine Dunkelflaute (Ja). "
+            "PV + Wind enthält die Anpassung durch die Dunkelflautensimulation. "
+            "Zum Vergrößern einen Zeitraum im Diagramm aufziehen; "
+            "ein Doppelklick setzt den Zoom zurück."
+        )
+        st.plotly_chart(dunkelflauten_graph(df_simulation), width='stretch')
+        #===========================================================================================
 
         #hier ausgabe der Erzeugungen Wind,PV, Wasser usw.z.Zt als Line. wird noch geändert
         fig=simuliere_ee_erzeugung(df_simulation)
