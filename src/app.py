@@ -111,6 +111,109 @@ elif(auswahl_nav=="Zeitreihen-Analyse"):
 
 
 #---------- tab3 simulation ----------
+# elif(auswahl_nav=="Szenario-Konfiguration"):
+#     #st.title("3. coming soon...")
+    
+#     #eingabe und infos des zu erstellenden szenario
+#     st.header("Szenario-Konfigurator")
+#     #st.subheader("Szenario erstellen(noch nicht lauffähig)")
+#     st.header("Szenario-Konfigurator")
+
+#     szenario_name=st.text_input(
+#         "Szenario-Name", placeholder="z.b. ausbauziel 2030"
+#     )
+    
+#     szenario_beschreibung = st.text_area(
+#         "Szenario-Beschreibung", placeholder="kurze beschreibung des szenarios..."
+#         )
+
+    
+
+#     # erneuerbare energien und verbrauch, verbindung zu simulation.py von dary
+#     st.subheader("Ausbau der erneuerbaren Energien & Verbrauch")
+
+
+   
+#     with st.form("simulation_form"):
+#         col_links, col_rechts=st.columns(2)
+
+#         with col_links:
+#             faktor_pv=st.number_input(
+#                 "Photovoltaik-Leistung [GW]",
+#                 min_value=0.0,
+#                 value=147.0,
+#                 step=10.0
+#             )
+
+#             faktor_onshore=st.number_input(
+#                 "Wind-Onshore-Leistung [GW]",
+#                 min_value=0.0,
+#                 value=80.0,
+#                 step=10.0
+#             )
+
+#             faktor_offshore=st.number_input(
+#                 "Wind-Offshore-Leistung [GW]",
+#                 min_value=0.0,
+#                 value=20.0,
+#                 step=10.0
+#             )
+
+#         with col_rechts:
+#             faktor_biomasse=st.number_input(
+#                 "Biomasse-Leistung [GW]",
+#                 min_value=0.0,
+#                 value=7.0,
+#                 step=1.0
+#             )
+
+#             #nachträglich einfügen
+#             faktor_wasserkraft=st.number_input(
+#                 "Wasserkraft-Leistung [GW]",
+#                 min_value=0.0,
+#                 value=1.0,
+#                 step=1.0
+#             )
+
+#             verbrauchsReferenzJahr=st.selectbox(
+#                 "Referenz Jahr Verbrauch",
+#                 options=["2020","2021","2022","2023","2024","2025",],
+#                 index=5,
+#             )
+#             gesamtVerbrauchIn_TWh=st.number_input(
+#                 "Gesamtverbrauch in [TWh]",
+#                 min_value=0.1,
+#                 value=530.0,
+#                 step=10.0
+#             )
+
+#         simulation_starten = st.form_submit_button(
+#                     "Simulation starten"
+#                 )
+
+#     if simulation_starten:
+#             #wenn gedrückt, dann simuliere mit ausgewählten Faktoren
+#             ergebnis = simuliere_ee(
+#                 leistung_pv=faktor_pv,
+#                 leistung_onshore=faktor_onshore,
+#                 leistung_offshore=faktor_offshore,
+#                 leistung_biomasse=faktor_biomasse,
+#                 leistung_wasserkraft=faktor_wasserkraft,
+#                 verbrauchsReferenzJahr=verbrauchsReferenzJahr,
+#                 gesamtVerbrauchIn_TWh=gesamtVerbrauchIn_TWh
+#             )
+
+#             st.subheader("Simulationsergebnisse")
+#             st.dataframe(ergebnis.head(12)) #Daten Aus Simulation werden in einer Tabelle der größe 12 dargestellt
+#             #Zwischenspeichern der Simulation zum späteren Plotten der Ergebnisse
+#             st.session_state["df_simulation"]=ergebnis
+
+
+
+
+#neu------------------------------------------------------------------------------
+
+#---------- tab3 simulation ----------
 elif(auswahl_nav=="Szenario-Konfiguration"):
     #st.title("3. coming soon...")
     
@@ -126,22 +229,15 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
     szenario_beschreibung = st.text_area(
         "Szenario-Beschreibung", placeholder="kurze beschreibung des szenarios..."
         )
-
     
-
-    # erneuerbare energien und verbrauch, verbindung zu simulation.py von dary
-    st.subheader("Ausbau der erneuerbaren Energien & Verbrauch")
-
-
-    #faktor_pv = 1
-    #faktor_onshore = 1
-    #faktor_offshore = 1
-   
     with st.form("simulation_form"):
-        col_links, col_rechts=st.columns(2)
-
-        with col_links:
-            faktor_pv=st.number_input(
+        
+        #---------- box erzeugung ----------
+        with st.container(border=True):
+            st.subheader("Erzeugung")
+            col_links, col_rechts=st.columns(2)
+            
+            aktor_pv=st.number_input(
                 "Photovoltaik-Leistung [GW]",
                 min_value=0.0,
                 value=147.0,
@@ -177,19 +273,28 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
                 value=1.0,
                 step=1.0
             )
-
+            
+    #---------- box verbrauch ----------
+    with st.container(border=True):
+        st.subheader("Verbrauch")
+        col_links, col_rechts=st.columns(2)
+        
+        with col_links:
             verbrauchsReferenzJahr=st.selectbox(
-                "Referenz Jahr Verbrauch",
-                options=["2020","2021","2022","2023","2024","2025",],
-                index=5,
-            )
+                            "Referenz Jahr Verbrauch",
+                            options=["2020","2021","2022","2023","2024","2025",],
+                            index=5,
+                        )
+            
+        with col_rechts:
             gesamtVerbrauchIn_TWh=st.number_input(
-                "Gesamtverbrauch in [TWh]",
-                min_value=0.1,
-                value=530.0,
-                step=10.0
-            )
-
+                            "Gesamtverbrauch in [TWh]",
+                            min_value=0.1,
+                            value=530.0,
+                            step=10.0
+                        )
+            
+            
         simulation_starten = st.form_submit_button(
                     "Simulation starten"
                 )
@@ -209,7 +314,25 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
             st.subheader("Simulationsergebnisse")
             st.dataframe(ergebnis.head(12)) #Daten Aus Simulation werden in einer Tabelle der größe 12 dargestellt
             #Zwischenspeichern der Simulation zum späteren Plotten der Ergebnisse
-            st.session_state["df_simulation"]=ergebnis
+            st.session_state["df_simulation"]=ergebnis          
+            
+        
+            
+            
+            
+
+        
+    
+
+
+
+
+
+
+
+
+
+
 
 
 #--------Tab 4 Diagramme--------
