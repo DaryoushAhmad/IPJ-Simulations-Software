@@ -142,39 +142,40 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
 
         with col_links:
             faktor_pv=st.number_input(
-                "Photovoltaik-Leistung",
+                "Photovoltaik-Leistung [GW]",
                 min_value=0.0,
-                value=1.0,
-                step=0.1
+                value=147.0,
+                step=10.0
             )
 
             faktor_onshore=st.number_input(
-                "Wind-Onshore-Leistung",
+                "Wind-Onshore-Leistung [GW]",
                 min_value=0.0,
-                value=1.0,
-                step=0.1
+                value=80.0,
+                step=10.0
             )
 
             faktor_offshore=st.number_input(
-                "Wind-Offshore-Leistung",
+                "Wind-Offshore-Leistung [GW]",
                 min_value=0.0,
-                value=1.0,
-                step=0.1
+                value=20.0,
+                step=10.0
             )
 
         with col_rechts:
             faktor_biomasse=st.number_input(
-                "Biomasse-Leistung",
+                "Biomasse-Leistung [GW]",
                 min_value=0.0,
-                value=1.0,
-                step=0.1
+                value=7.0,
+                step=1.0
             )
 
+            #nachträglich einfügen
             faktor_wasserkraft=st.number_input(
-                "Wasserkraft-Leistung",
+                "Wasserkraft-Leistung [GW]",
                 min_value=0.0,
                 value=1.0,
-                step=0.1
+                step=1.0
             )
 
             verbrauchsReferenzJahr=st.selectbox(
@@ -185,7 +186,7 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
             gesamtVerbrauchIn_TWh=st.number_input(
                 "Gesamtverbrauch in [TWh]",
                 min_value=0.1,
-                value=600.0,
+                value=530.0,
                 step=10.0
             )
 
