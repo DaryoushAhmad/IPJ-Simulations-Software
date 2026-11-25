@@ -112,7 +112,7 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
     #eingabe und infos des zu erstellenden szenario
     st.header("Szenario-Konfigurator")
     #st.subheader("Szenario erstellen(noch nicht lauffähig)")
-    st.header("Szenario-Konfigurator")
+    
 
     szenario_name=st.text_input(
         "Szenario-Name", placeholder="z.b. ausbauziel 2030"
