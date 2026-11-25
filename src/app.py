@@ -133,7 +133,7 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
         #---------- box erzeugung ----------
         with st.container(border=True):
             st.subheader("Erzeugung")
-            col_links, col_rechts=st.columns(2)
+            col_links, col_mitte=st.columns(2)
             
             with col_links:
                 leistung_pv=st.number_input(
@@ -157,7 +157,7 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
                     step=10.0
                 )
 
-            with col_rechts:
+            with col_mitte:
                 leistung_biomasse=st.number_input(
                     "Biomasse-Leistung [GW]",
                     min_value=0.0,
@@ -184,7 +184,7 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
         #---------- box verbrauch ----------
         with st.container(border=True):
             st.subheader("Verbrauch")
-            col_links, col_rechts=st.columns(2)
+            col_links, col_mitte=st.columns(2)
         
             with col_links:
                 verbrauchsReferenzJahr=st.selectbox(
@@ -193,19 +193,114 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
                                 index=5,
                             )
             
-            with col_rechts:
+            with col_mitte:
                 gesamtVerbrauchIn_TWh=st.number_input(
                                 "Gesamtverbrauch in [TWh]",
                                 min_value=0.1,
                                 value=530.0,
                                 step=10.0
                             )
+                
+                
+ # ---------- box speicher ----------
+        with st.container(border=True):
+            st.subheader("coming soon: Speicher & Reserve")
+            col_links, col_mitte = st.columns(2)
+
+            with col_links:
+                st.markdown("**Kurzzeitspeicher (Batterie / Pumpspeicher)**")
+                speicher_kurz_kapazitaet_gwh = st.number_input(
+                    "Kapazität Kurzzeitspeicher [GWh]",
+                    min_value=0.0,
+                    value=0.0,
+                    step=0.0,
+                )
+                speicher_kurz_leistung_gw = st.number_input(
+                    "Lade-/Entladeleistung [GW]",
+                    min_value=0.0,
+                    value=0.0,
+                    step=1.0,
+                )
+
+            with col_mitte:
+                st.markdown("**Langzeitspeicher (H₂) & Reservekraftwerke**")
+                speicher_lang_kapazitaet_twh = st.number_input(
+                    "Kapazität Langzeitspeicher [TWh]",
+                    min_value=0.0,
+                    value=0.0,
+                    step=1.0,
+                )
+                speicher_lang_laden_gw = st.number_input(
+                    "Elektrolyseur-Leistung (Laden) [GW]",
+                    min_value=0.0,
+                    value=0.0,
+                    step=1.0,
+                )
+                speicher_lang_entladen_gw = st.number_input(
+                    "Rückverstromung (Entladen) [GW]",
+                    min_value=0.0,
+                    value=0.0,
+                    step=1.0,
+                )
+                reserve_leistung_gw = st.number_input(
+                    "Reservekraftwerke [GW]",
+                    min_value=0.0,
+                    value=0.0,
+                    step=1.0,
+                )
+
+            #wirkungsgrade ausklappen
+            with st.expander("Wirkungsgrade & CO2-Faktor (optional)"):
+                col_links, col_mitte, col_rechts = st.columns(3)
+                with col_links:
+                    eta_kurz_ges = st.number_input(
+                        "Wirkungsgrad Kurzzeit [%]",
+                        min_value=0.0,
+                        max_value=1.0,
+                        value=0.0,
+                        step=1.0,
+                    )
+                with col_mitte:
+                    eta_lang_laden = st.number_input(
+                        "Wirkungsgrad H2-Laden [%]",
+                        min_value=0.0,
+                        max_value=0.0,
+                        value=0.0,
+                        step=1.0,
+                    )
+                    eta_lang_entladen = st.number_input(
+                        "Wirkungsgrad H2-Entladen [%]",
+                        min_value=0.0,
+                        max_value=0.0,
+                        value=0.0,
+                        step=1.0,
+                    )
+                with col_rechts:
+                    eta_reserve = st.number_input(
+                        "Wirkungsgrad Reserve [%]",
+                        min_value=0.0,
+                        max_value=0.0,
+                        value=0.0,
+                        step=1.0,
+                    )
+                    co2_faktor_g_kwh = st.number_input(
+                        "CO2-Faktor Reserve [g/kWh]",
+                        min_value=0.0,
+                        value=0.0,
+                        step=1.0,
+                    )    
+                
+                #-----------------------
+                
+                
+                
+                
             
             
         simulation_starten = st.form_submit_button(
                     "Simulation starten"
                 )
-
+#---------- simulation starten ----------
     if simulation_starten:
             #wenn gedrückt, dann simuliere mit eingegebenen Leistungen in GW
             with st.spinner(f"Simuliere Jahre 2027 bis {zielJahr}..."):
@@ -235,6 +330,36 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
             df_ziel = ergebnis_dict[zielJahr]
             st.dataframe(df_ziel.head(100), width="stretch")
   
+            
+        
+       
+    
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             
             
             
@@ -316,45 +441,6 @@ elif(auswahl_nav=="Simulationsdiagramme"):
 
 
     
-# #nachher löschen wenn schon gebaut--------------------------------------------
-#     with st.form("simulation_form"):
-
-#         faktor_pv = st.number_input(
-#             "Photovoltaik-Faktor",
-#             min_value=0.0,
-#             value=1.0,
-#             step=0.1
-#         )
-
-#         faktor_onshore = st.number_input(
-#             "Wind-Onshore-Faktor",
-#             min_value=0.0,
-#             value=1.0,
-#             step=0.1
-#         )
-
-#         faktor_offshore = st.number_input(
-#             "Wind-Offshore-Faktor",
-#             min_value=0.0,
-#             value=1.0,
-#             step=0.1
-#         )
-
-#         simulation_starten = st.form_submit_button(
-#             "Simulation starten"
-#         )
-
-#     if simulation_starten:
-
-#         ergebnis = simuliere_ee(
-#             faktor_pv,
-#             faktor_onshore,
-#             faktor_offshore
-#         )
-
-#         st.subheader("Simulationsergebnisse")
-#         st.dataframe(ergebnis.head(12))
-
 
 
 
