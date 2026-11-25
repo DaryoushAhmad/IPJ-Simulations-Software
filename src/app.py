@@ -18,17 +18,23 @@
 #imports
 import streamlit as st
 import pandas as pd
+
 from DataFunktionen import setUpGesamtcsv, setUpJahresStatistikcsv
-from BerechnungsFunktionen import erzeuge_ee_histogramm, erzeugung_verbrauch_vergleich, produktionsmenge_vergleich, verhaeltnis_erzeugung_verbrauch
-from BerechnungsFunktionen import erzeuge_kreisdiagram_spalten
-from BerechnungsFunktionen import erzeuge_zeitreihen_chart
-from BerechnungsFunktionen import simuliere_ee_erzeugung
-from BerechnungsFunktionen import dunkelflauten_graph
 from Simulation import simuliere_ee, berechne_kennzahlen
 
+from BerechnungsFunktionen import (
+    erzeuge_ee_histogramm,
+    erzeuge_kreisdiagram_spalten,
+    erzeuge_zeitreihen_chart,
+    simuliere_ee_erzeugung,
+    erzeugung_verbrauch_vergleich,
+    produktionsmenge_vergleich,
+    verhaeltnis_erzeugung_verbrauch,
+    dunkelflauten_graph,
+)
 
 #grundeinstellungen festlegen
-st.set_page_config("Simulationssoftware","⚡" , "wide") #funtkioniert das?
+st.set_page_config("Simulationssoftware","⚡" , "wide")
 
 #titel
 st.sidebar.title("Energiesystem-Simulator")
@@ -40,7 +46,7 @@ dfJahres=setUpJahresStatistikcsv()
 
 
 #auswahlmenü
-auswahl_nav=st.sidebar.radio("Navigation", ["Dashboard", "Zeitreihen-Analyse", "Szenario-Konfiguration", "Simulationsdiagramme", "erklärungen"])
+auswahl_nav=st.sidebar.radio("Navigation", ["Dashboard", "Zeitreihen-Analyse", "Szenario-Konfiguration", "Simulationsdiagramme", "Erklärungen"])
 
 #---------- dashboard ----------
 if(auswahl_nav=="Dashboard"):
@@ -115,11 +121,11 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
     
 
     szenario_name=st.text_input(
-        "Szenario-Name", placeholder="z.b. ausbauziel 2030"
+        "Szenario-Name", placeholder="z.b. Ausbauziel 2030"
     )
     
     szenario_beschreibung = st.text_area(
-        "Szenario-Beschreibung", placeholder="kurze beschreibung des szenarios..."
+        "Szenario-Beschreibung", placeholder="kurze Beschreibung des Szenarios..."
         )
     
     with st.form("simulation_form"):
@@ -129,42 +135,51 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
             st.subheader("Erzeugung")
             col_links, col_rechts=st.columns(2)
             
-            leistung_pv=st.number_input(
-                "Photovoltaik-Leistung [GW]",
-                min_value=0.0,
-                value=147.0,
-                step=10.0
-            )
+            with col_links:
+                leistung_pv=st.number_input(
+                    "Photovoltaik-Leistung [GW]",
+                    min_value=0.0,
+                    value=147.0,
+                    step=10.0
+                )
 
-            leistung_onshore=st.number_input(
-                "Wind-Onshore-Leistung [GW]",
-                min_value=0.0,
-                value=80.0,
-                step=10.0
-            )
+                leistung_onshore=st.number_input(
+                    "Wind-Onshore-Leistung [GW]",
+                    min_value=0.0,
+                    value=80.0,
+                    step=10.0
+                )
 
-            leistung_offshore=st.number_input(
-                "Wind-Offshore-Leistung [GW]",
-                min_value=0.0,
-                value=20.0,
-                step=10.0
-            )
+                leistung_offshore=st.number_input(
+                    "Wind-Offshore-Leistung [GW]",
+                    min_value=0.0,
+                    value=20.0,
+                    step=10.0
+                )
 
-        with col_rechts:
-            leistung_biomasse=st.number_input(
-                "Biomasse-Leistung [GW]",
-                min_value=0.0,
-                value=7.0,
-                step=1.0
-            )
+            with col_rechts:
+                leistung_biomasse=st.number_input(
+                    "Biomasse-Leistung [GW]",
+                    min_value=0.0,
+                    value=7.0,
+                    step=1.0
+                )
 
-            #nachträglich einfügen
-            leistung_wasserkraft=st.number_input(
-                "Wasserkraft-Leistung [GW]",
-                min_value=0.0,
-                value=1.0,
-                step=1.0
-            )
+                #nachträglich einfügen wenn ich den wert habe
+                leistung_wasserkraft=st.number_input(
+                    "Wasserkraft-Leistung [GW]",
+                    min_value=0.0,
+                    value=1.0,
+                    step=1.0
+                )
+                
+                zielJahr=st.number_input(
+                    "Zieljahr der Simulation",
+                    min_value=2027,
+                    max_value=2050,
+                    value=2035,
+                    step=1,                    
+                )
             
         #---------- box verbrauch ----------
         with st.container(border=True):
@@ -187,56 +202,70 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
                             )
             
             
-            simulation_starten = st.form_submit_button(
-                        "Simulation starten"
-                    )
+        simulation_starten = st.form_submit_button(
+                    "Simulation starten"
+                )
 
     if simulation_starten:
             #wenn gedrückt, dann simuliere mit eingegebenen Leistungen in GW
-            ergebnis = simuliere_ee(
-                leistung_pv=leistung_pv,
-                leistung_onshore=leistung_onshore,
-                leistung_offshore=leistung_offshore,
-                leistung_biomasse=leistung_biomasse,
-                leistung_wasserkraft=leistung_wasserkraft,
-                verbrauchsReferenzJahr=verbrauchsReferenzJahr,
-                gesamtVerbrauchIn_TWh=gesamtVerbrauchIn_TWh
-            )
+            with st.spinner(f"Simuliere Jahre 2027 bis {zielJahr}..."):
+                ergebnis_dict = simuliere_ee(
+                    leistung_pv=leistung_pv,
+                    leistung_onshore=leistung_onshore,
+                    leistung_offshore=leistung_offshore,
+                    leistung_biomasse=leistung_biomasse,
+                    leistung_wasserkraft=leistung_wasserkraft,
+                    verbrauchsReferenzJahr=verbrauchsReferenzJahr,
+                    gesamtVerbrauchIn_TWh=gesamtVerbrauchIn_TWh,
+                    zielJahr=zielJahr
+                )
 
-            st.subheader("Simulationsergebnisse")
-            st.dataframe(ergebnis.head(1000)) #Daten Aus Simulation werden in einer Tabelle der größe 12 dargestellt
-            #Zwischenspeichern der Simulation zum späteren Plotten der Ergebnisse
-            st.session_state["df_simulation"]=ergebnis          
+
+            #st.session_state["df_simulationen"]=ergebnis_dict
+            #st.session_state["szenario_name"]=szenario_name
+            #st.session_state["szenario_beschreibung"]=szenario_beschreibung
             
+            #anzeige vom buttonklick entkoppeln ?
+            #später hinzufügen------
+            
+            st.session_state["df_simulationen"] = ergebnis_dict
+            st.success(f"Simulation bis {zielJahr} abgeschlossen!")
         
+            # Nur das Zieljahr direkt anzeigen
+            df_ziel = ergebnis_dict[zielJahr]
+            st.dataframe(df_ziel.head(100), width="stretch")
+  
+            
             
             
             
 
         
-    
-
-
-
-
-
-
-
-
-
 
 
 
 #--------Tab 4 Diagramme--------
-#Marios
+#Marios, Kai, Dary
 #bearbeitet von kai, st.titel=... gibts nicht! Nutze lieber st.suberheader("text")
 
 elif(auswahl_nav=="Simulationsdiagramme"):
     st.header("Simulationsergebnisse")
-    if "df_simulation" in st.session_state:
-        df_simulation = st.session_state["df_simulation"]
-        #st.write(df_simulation.columns)
-        #st.write(len(df_simulation))
+    if "df_simulationen" in st.session_state:
+        df_simulationen = st.session_state["df_simulationen"]
+        verfuegbare_jahre=sorted(df_simulationen.keys())
+        #st.write(df_simulationen.columns)
+        #st.write(len(df_simulationen))
+        
+
+        ausgewaehltes_jahr=st.selectbox(
+            "Simuliertes Jahr für Diagramme wählen",
+            options=verfuegbare_jahre,
+            index=len(verfuegbare_jahre) - 1,
+            key="jahr_diagramme",
+        )
+        df_simulationen=df_simulationen[ausgewaehltes_jahr]
+
+        
         #========================================von dary===================================================
 
         st.subheader("Dunkelflauten und PV-/Wind-Erzeugung")
@@ -246,27 +275,27 @@ elif(auswahl_nav=="Simulationsdiagramme"):
             "Zum Vergrößern einen Zeitraum im Diagramm aufziehen; "
             "ein Doppelklick setzt den Zoom zurück."
         )
-        st.plotly_chart(dunkelflauten_graph(df_simulation), width='stretch')
+        st.plotly_chart(dunkelflauten_graph(df_simulationen), width='stretch')
         #===========================================================================================
 
         #hier ausgabe der Erzeugungen Wind,PV, Wasser usw.z.Zt als Line. wird noch geändert
-        fig=simuliere_ee_erzeugung(df_simulation)
+        fig=simuliere_ee_erzeugung(df_simulationen)
         st.subheader("Simulation der Erzeugungen in MWh")
         st.plotly_chart(fig, width='stretch')
 
         #hier Ausgabe Erzeugung, Verbrauch und Bilanz. z.Zt als bar. später als Überlagerung
-        fig=erzeugung_verbrauch_vergleich(df_simulation)
+        fig=erzeugung_verbrauch_vergleich(df_simulationen)
         st.subheader("Simulation und Vergleich von Erzeugung und Verbrauch")
         st.plotly_chart(fig,width='stretch')
 
         #hier Ausgabe von Überschuss und Fehlmenge und Restlast
-        fig=produktionsmenge_vergleich(df_simulation)
+        fig=produktionsmenge_vergleich(df_simulationen)
         st.subheader("Übersicht Überschuss, Fehlmenge und Restlast")
         st.plotly_chart(fig,width='stretch')
 
 
         #Erzeugung/Verbrauch alleine als line
-        fig=verhaeltnis_erzeugung_verbrauch(df_simulation)
+        fig=verhaeltnis_erzeugung_verbrauch(df_simulationen)
         st.subheader("Übersicht Überschuss, Fehlmenge und Restlast")
         st.plotly_chart(fig,width='stretch')
 
@@ -481,9 +510,9 @@ elif(auswahl_nav=="Simulationsdiagramme"):
 
 
 
-#---------- tab4 ----------
+#---------- tab5 ----------
 
-elif(auswahl_nav=="erklärungen"):
+elif(auswahl_nav=="Erklärungen"):
     
     st.title("4. coming soon...")
     
