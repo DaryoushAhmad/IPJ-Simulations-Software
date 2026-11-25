@@ -129,11 +129,7 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
             st.subheader("Erzeugung")
             col_links, col_rechts=st.columns(2)
             
-<<<<<<< HEAD
-            faktor_pv=st.number_input(
-=======
             leistung_pv=st.number_input(
->>>>>>> 5c520fd6800e05e4b11b616a8b9a7151e5ba5785
                 "Photovoltaik-Leistung [GW]",
                 min_value=0.0,
                 value=147.0,
