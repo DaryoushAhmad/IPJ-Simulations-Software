@@ -28,9 +28,11 @@ from BerechnungsFunktionen import (
     erzeuge_zeitreihen_chart,
     simuliere_ee_erzeugung,
     erzeugung_verbrauch_vergleich,
-    produktionsmenge_vergleich,
+    #produktionsmenge_vergleich,
     verhaeltnis_erzeugung_verbrauch,
     dunkelflauten_graph,
+    vergleich_fehlmenge_ueberschuss,
+    plot_verbrauch_referenz
 )
 
 #grundeinstellungen festlegen
@@ -322,7 +324,7 @@ elif(auswahl_nav=="Szenario-Konfiguration"):
             
             #anzeige vom buttonklick entkoppeln ?
             #später hinzufügen------
-            
+            st.session_state["verbrauchsReferenzJahr"] = verbrauchsReferenzJahr
             st.session_state["df_simulationen"] = ergebnis_dict
             st.success(f"Simulation bis {zielJahr} abgeschlossen!")
         
@@ -409,19 +411,46 @@ elif(auswahl_nav=="Simulationsdiagramme"):
         st.plotly_chart(fig, width='stretch')
 
         #hier Ausgabe Erzeugung, Verbrauch und Bilanz. z.Zt als bar. später als Überlagerung
-        fig=erzeugung_verbrauch_vergleich(df_simulationen)
+        # #sorry kai, aber ich muss hier mal reingrätschen
+        fig1=erzeugung_verbrauch_vergleich(df_simulationen)
+        fig2=vergleich_fehlmenge_ueberschuss(df_simulationen)
         st.subheader("Simulation und Vergleich von Erzeugung und Verbrauch")
-        st.plotly_chart(fig,width='stretch')
+
+        #Maximale und mittlere Restlast ausgeben
+        max_restlast = df_simulationen["Restlast [GW]"].max()
+        mittel_restlast = df_simulationen["Restlast [GW]"].mean()
+        col1, col2 = st.columns(2)
+        
+        with col1:
+                st.metric("Mittlere Restlast",f"{mittel_restlast:.1f} GW")
+        
+        with col2:
+                st.metric("Maximale Restlast",f"{max_restlast:.1f} GW")
+
+        #Ausgabe von zwei Plots auf einer höhe
+        col1, col2=st.columns(2)
+        with col1:
+                st.plotly_chart(fig1,width='stretch')
+
+        with col2: 
+                st.plotly_chart(fig2,width='stretch')
 
         #hier Ausgabe von Überschuss und Fehlmenge und Restlast
-        fig=produktionsmenge_vergleich(df_simulationen)
-        st.subheader("Übersicht Überschuss, Fehlmenge und Restlast")
-        st.plotly_chart(fig,width='stretch')
+        #fig=produktionsmenge_vergleich(df_simulationen)
+        #st.subheader("Übersicht Überschuss, Fehlmenge und Restlast")
+        #st.plotly_chart(fig,width='stretch')
 
 
         #Erzeugung/Verbrauch alleine als line
         fig=verhaeltnis_erzeugung_verbrauch(df_simulationen)
-        st.subheader("Übersicht Überschuss, Fehlmenge und Restlast")
+        st.subheader("Übersicht Erzeuger-Verbraucherverhältnis")
+        st.plotly_chart(fig,width='stretch')
+
+        #Erzeugung/Verbrauch alleine als line
+        st.info(f"Verwendetes Verbrauchsprofil: {st.session_state['verbrauchsReferenzJahr']}")
+
+        st.subheader("Vergleich Verbrauch Referenzjahr und Auswahljahr")
+        fig=plot_verbrauch_referenz(df_simulationen)
         st.plotly_chart(fig,width='stretch')
 
 

@@ -171,16 +171,39 @@ def erzeuge_zeitreihen_chart(df_eingabe):
 #Zunächst in V1 line plots.  Ich habe vor da nachzubessern. Gerne Feedback!
 #Es könnte auch sein, dass ich so eine zeitauflösungsstufe mache wie in Tab 2 von Kai. es sind sonst einfach echt Viele Werte auf einmal
 def simuliere_ee_erzeugung(df):
-    
-    fig=px.line(
-        df,
-        x="Viertelstunde (Beginn)",
-        y=["PV [MWh]",
-           "Wind Onshore [MWh]",
-           "Wind Offshore [MWh]",
-           "Biomasse [MWh]",
-           "Wasserkraft [MWh]"]
+    spalten_erzeugung_simulation={"PV [MWh]" :"gold",
+           "Wind Onshore [MWh]" :"blue",
+           "Wind Offshore [MWh]" :"lightblue",
+           "Biomasse [MWh]" :"green",
+           "Wasserkraft [MWh]" :"orange"}
+    '''
+    df_long=df.melt(
+        id_vars=["Viertelstunde (Beginn)"],
+        value_vars=spalten_erzeugung_simulation,
+        var_name="Quelle",
+        value_name="Erzeugung [MWh]"
     )
+    
+    fig=px.area(
+        df_long,
+        x="Viertelstunde (Beginn)",
+        y="Erzeugung [MWh]",
+        color='Quelle',
+        title='Simulationsergebnisse Erzeugung durch erneuerbare Energieträger'
+    )
+    '''
+    fig=go.Figure()
+
+    for spalte,farbe in spalten_erzeugung_simulation.items():
+
+        fig.add_trace(go.Scatter(
+                x=df["Viertelstunde (Beginn)"],
+                y=df[spalte],
+                mode='lines',
+                name=spalte,
+                stackgroup='one',
+                line=dict(color=farbe,width=0.5)
+                ))
 
     fig.add_trace(
         go.Scatter(
@@ -192,41 +215,131 @@ def simuliere_ee_erzeugung(df):
         )
     )
 
-    for trace in fig.data:
-            trace.opacity=0.5
+    fig.update_layout(
+        hovermode="x unified",
+        height=600,
+        #title="Simulation Erzeugungen EE",
+        xaxis_title="Datum",
+        yaxis_title="Erzeugung in [MWh]",
+        legend_title="Quelle",
+        legend=dict(                #Legende über dem Plot darstellen
+                    orientation='h',
+                    yanchor='bottom',
+                    y=1.02,
+                    xanchor='center',
+                    x=0.5
+                    ),
+                    margin=dict(t=120,
+                                b=100)
+            )
+
+    return fig
+
+
+def vergleich_fehlmenge_ueberschuss(df):
+    #spalten_Fehlmenge_Ueberschuss=["Fehlmenge [MWh]","Ueberschuss [MWh]"]
+    fig=go.Figure()
+
+    fig.add_trace(go.Scatter(
+                x=df["Viertelstunde (Beginn)"],
+                y=df["Fehlmenge [MWh]"],
+                mode='lines',
+                name='Fehlmenge',
+                line=dict(color='red',width=0.5)
+                ))
+
+    fig.add_trace(go.Scatter(
+                x=df["Viertelstunde (Beginn)"],
+                y=df["Ueberschuss [MWh]"],
+                mode='lines',
+                fill='tozeroy',
+                name='Verbrauch',
+                line=dict(color='green',width=0.5),
+                opacity=0.7
+            ))
+    
+    
+    '''
+    fig=px.area(
+        df,
+        x="Viertelstunde (Beginn)",
+        y=spalten_Fehlmenge_Ueberschuss,
+        title='Visualisierung Überschuss/Fehlmenge',
+        color_discrete_sequence=['red','green']
+    ) '''
 
     fig.update_layout(
         hovermode="x unified",
-        title="Simulation Erzeugungen EE",
         xaxis_title="Datum",
-        yaxis_title="Erzeugung [MWh]"
+        yaxis_title="Energie in [MWh]",
+        legend_title='Beschreibung',
+        legend=dict(                #Legende über dem Plot darstellen
+            orientation='h',
+            yanchor='bottom',
+            y=1.02,
+            xanchor='center',
+            x=0.5
+        ),
+        margin=dict(t=120,
+                    b=100)
     )
 
     return fig
 
+
 #Vergleich zwischen Erzeugung, Verbrauch und Bilanz. kann man gestapelt darstellen oder so
 def erzeugung_verbrauch_vergleich(df):
+    fig=go.Figure()
+    fig.add_trace(go.Scatter(
+        x=df["Viertelstunde (Beginn)"],
+        y=df["EE_Erzeugung [MWh]"],
+        mode='lines',
+        fill='tozeroy',
+        name='EE-Erzeugung',
+        line=dict(width=0.5),
+        opacity=0.7
+    ))
 
-    fig=px.line(
-        df,
-        x="Viertelstunde (Beginn)",
-        y=["EE_Erzeugung [MWh]", "Verbrauch [MWh]", "Bilanz [MWh]"]
-    )
-    for trace in fig.data:
-            trace.opacity=0.5
+    fig.add_trace(go.Scatter(
+            x=df["Viertelstunde (Beginn)"],
+            y=df["Verbrauch [MWh]"],
+            mode='lines',
+            fill='tozeroy',
+            name='Verbrauch',
+            line=dict(width=0.5),
+            opacity=0.7
+        ))
+
+    fig.add_trace(go.Scatter(
+                x=df["Viertelstunde (Beginn)"],
+                y=df["Bilanz [MWh]"],
+                mode='lines',
+                name='Bilanz',
+                line=dict(color='red',width=0.5)
+            ))
 
     fig.update_layout(
         hovermode="x unified",
         title="Vergleich Erzeugung und Verbrauch",
         xaxis_title="Datum",
-        yaxis_title="Energie in MWh"
+        yaxis_title="Energie in MWh",
+        legend_title='Kategorie',
+        legend=dict(                #Legende über dem Plot darstellen
+                    orientation='h',
+                    yanchor='bottom',
+                    y=1.02,
+                    xanchor='center',
+                    x=0.5
+                    ),
+                    margin=dict(t=120,
+                                b=100)
 
     )
 
     return fig
 
 #Hier muss restlast noch in seine Eigene Y-Achse gepackt werden, da keine Energie sondern eine Leistung
-def produktionsmenge_vergleich(df):
+#def produktionsmenge_vergleich(df):
     fig=px.line(
             df,
             x="Viertelstunde (Beginn)",
@@ -240,7 +353,7 @@ def produktionsmenge_vergleich(df):
 
     fig.update_layout(
         hovermode="x unified",
-        title="Produktionsmengenvergleich",
+        title="Aussortieren von Produktionsmengenvergleich",
         xaxis_title="Datum",
         yaxis_title="Energie in MWh"
     
@@ -258,10 +371,44 @@ def verhaeltnis_erzeugung_verbrauch(df):
         hovermode="x unified",
         title="Verhältnis zwischen Erzeugung und Verbrauch",
         xaxis_title="Datum",
-        yaxis_title="Anteil in Prozent"     
+        yaxis_title="Anteil in Prozent",
+        legend_title="Verhältnis",
+        legend=dict(                #Legende über dem Plot darstellen
+                    orientation='h',        
+                    yanchor='bottom',        
+                    y=1.02,
+                    xanchor='center',
+                    x=0.5
+                    ),
+                    margin=dict(t=120,b=100)     
     
         )
     return fig
+
+def plot_verbrauch_referenz(df):
+
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Scatter(
+            x=df["Viertelstunde (Beginn)"],
+            y=df["Verbrauch [MWh]"],
+            mode="lines",
+            name="Verbrauch",
+            line=dict(color="blue")
+        )
+    )
+    fig.update_layout(
+            hovermode="x unified",
+            xaxis_title="Datum",
+            yaxis_title="Energie in [MWh]"
+            )
+
+    return fig
+
+
+
+
 
 def dunkelflauten_graph(df):
     """Zeigt simulierte PV-/Wind-Erzeugung und Dunkelflauten je Viertelstunde.
