@@ -52,7 +52,8 @@ def setUpJahresStatistikcsv():
     )
 
     return dfJahresStatistik
-    
+
+@st.cache_data
 def setUpErzeugerProfil():
     dfErzeugerProfil = pd.read_csv(
         DATA_PATH_ERZEUGERPROFIL,

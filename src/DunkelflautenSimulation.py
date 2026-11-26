@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from pathlib import Path
+import streamlit as st
 
 # Pfade festlegen
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,7 +12,7 @@ DATA_PATH_P_WEITER = BASE_DIR / "data" / "bereinigt" / "dunkelflauten_p_weiter.c
 
 
 # ---------- Wahrscheinlichkeitsdaten einlesen ----------
-
+@st.cache_data(show_spinner=False)
 def ladeWahrscheinlichkeitsDaten():
 
     df_P_Start = pd.read_csv(DATA_PATH_START)
@@ -184,11 +185,30 @@ def randomisiereErzeugung(
     auslastung = 0
     vorherigeDunkelflaute = False
 
+
+    # Eingabewerte zum Lesen
+    statusArray = dfErzeugung["Dunkelflaute"].to_numpy()
+    anteilPV = dfErzeugung["Anteil PV"].to_numpy()
+    anteilOnshore = dfErzeugung["Anteil Wind Onshore"].to_numpy()
+    anteilOffshore = dfErzeugung["Anteil Wind Offshore"].to_numpy()
+
+    # Kopien der Erzeugungswerte zum Bearbeiten
+    pv = dfErzeugung["PV [MWh]"].to_numpy(dtype=float, copy=True)
+    onshore = dfErzeugung["Wind Onshore [MWh]"].to_numpy(
+        dtype=float, copy=True
+    )
+    offshore = dfErzeugung["Wind Offshore [MWh]"].to_numpy(
+        dtype=float, copy=True
+    )
+    windPV = dfErzeugung["Wind + PV [MWh]"].to_numpy(
+        dtype=float, copy=True
+    )
+
     # Jede Viertelstunde durchlaufen
     for i in range(len(dfErzeugung)):
 
         # Zeile heraussuchen an stelle [i]
-        status = dfErzeugung["Dunkelflaute"].iloc[i]
+        status = statusArray[i]
 
 
         if status == 0:
@@ -219,49 +239,22 @@ def randomisiereErzeugung(
                 * 2.5
             )
 
-            # Die erzeugung für PV und wind einzeln anhand der Anteile neu berechnen.
-            erzeugungPVnachDF = (
-                erzeugungGesamt * dfErzeugung["Anteil PV"].iloc[i]
-            )
-
-            dfErzeugung.iloc[
-                i,
-                dfErzeugung.columns.get_loc("PV [MWh]")
-            ] = erzeugungPVnachDF
-
-            # Wind Onshore
-            erzeugungOnShorenachDF = (
-                erzeugungGesamt * dfErzeugung["Anteil Wind Onshore"].iloc[i]
-            )
-
-            dfErzeugung.iloc[
-                i,
-                dfErzeugung.columns.get_loc("Wind Onshore [MWh]")
-            ] = erzeugungOnShorenachDF
-
-            # Wind Offshore
-            erzeugungOffShorenachDF = (
-                erzeugungGesamt * dfErzeugung["Anteil Wind Offshore"].iloc[i]
-            )
-
-            dfErzeugung.iloc[
-                i,
-                dfErzeugung.columns.get_loc("Wind Offshore [MWh]")
-            ] = erzeugungOffShorenachDF
-            #======================
-
-
-            # Erzeugung überschreiben
-            dfErzeugung.iloc[
-                i,
-                dfErzeugung.columns.get_loc("Wind + PV [MWh]")
-            ] = erzeugungGesamt
+            pv[i] = erzeugungGesamt * anteilPV[i]
+            onshore[i] = erzeugungGesamt * anteilOnshore[i]
+            offshore[i] = erzeugungGesamt * anteilOffshore[i]
+            windPV[i] = erzeugungGesamt
 
             vorherigeDunkelflaute = True
 
         else:
 
             vorherigeDunkelflaute = False
+
+    dfErzeugung["PV [MWh]"] = pv
+    dfErzeugung["Wind Onshore [MWh]"] = onshore
+    dfErzeugung["Wind Offshore [MWh]"] = offshore
+    dfErzeugung["Wind + PV [MWh]"] = windPV
+
 
     return dfErzeugung
 

@@ -1,8 +1,9 @@
 from DataFunktionen import setUpErzeugerProfil
 from DunkelflautenSimulation import simuliereDunkelflauten
-
+import streamlit as st
 #app starten: python -m streamlit run src/app.py
 
+@st.cache_data(show_spinner=False)
 def simuliere_ee(leistung_pv, leistung_onshore, leistung_offshore, leistung_biomasse, leistung_wasserkraft,verbrauchsReferenzJahr ,gesamtVerbrauchIn_TWh, zielJahr=2035 ):
     """Simuliert MWh je Viertelstunde aus installierten Leistungen in GW."""
     # Profilwerte in Prozent: / 100 * 1000 MW/GW * 0.25 h = Faktor 2.5.
